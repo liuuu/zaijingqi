@@ -1,4 +1,6 @@
 // index.js
+
+const dayjs = require("dayjs");
 Page({
   data: {
     showTip: false,
@@ -83,12 +85,22 @@ Page({
     title: "",
     content: "",
   },
+  onLoad(e) {
+    const time = dayjs().hour();
+    let greet = "早上好";
+    if (time >= 12 && time < 18) {
+      greet = "下午好";
+    } else if (time >= 18 || time < 6) {
+      greet = "晚上好";
+    }
+    console.log("greet", greet);
+  },
   onClickPowerInfo(e) {
     const app = getApp();
     const index = e.currentTarget.dataset.index;
     const powerList = this.data.powerList;
     const selectedItem = powerList[index];
-    
+
     // 检查是否跳过环境配置检测
     if (!selectedItem.skipEnvCheck && !app.globalData.env) {
       wx.showModal({
