@@ -1,0 +1,27 @@
+page {
+  background-color: #f6f6f6;
+}
+
+.page {
+  padding: 32rpx;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 24rpx;
+  padding: 40rpx 32rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.04);
+}
+
+.title {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: #111111;
+  margin-bottom: 16rpx;
+}
+
+.description {
+  font-size: 28rpx;
+  line-height: 1.6;
+  color: #666666;
+}

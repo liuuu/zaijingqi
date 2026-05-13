@@ -1,8 +1,36 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/activities/index",
+    "pages/mine/index",
     "pages/example/index"
   ],
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#07C160",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/activities/index",
+        "text": "Activities",
+        "iconPath": "images/icons/examples.png",
+        "selectedIconPath": "images/icons/examples-active.png"
+      },
+      {
+        "pagePath": "pages/index/index",
+        "text": "云开发",
+        "iconPath": "images/icons/business.png",
+        "selectedIconPath": "images/icons/business-active.png"
+      },
+      {
+        "pagePath": "pages/mine/index",
+        "text": "Mine",
+        "iconPath": "images/icons/usercenter.png",
+        "selectedIconPath": "images/icons/usercenter-active.png"
+      }
+    ]
+  },
   "window": {
     "backgroundColor": "#F6F6F6",
     "backgroundTextStyle": "light",
