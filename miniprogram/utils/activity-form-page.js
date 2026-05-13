@@ -1,6 +1,5 @@
 const dayjs = require("dayjs");
 const {
-  buildActivityDetailRoute,
   createActivity,
   getActivityById,
   loadActivities,
@@ -22,13 +21,13 @@ function buildModeText(isEditMode) {
     ? {
         pageTitle: "编辑活动",
         headingTitle: "编辑活动",
-        pageDescription: "修改轮播内容、详情内容、图片和活动路由。",
+        pageDescription: "修改轮播内容、详情内容和图片。",
         submitText: "保存活动",
       }
     : {
         pageTitle: "新建活动",
         headingTitle: "新建活动",
-        pageDescription: "填写活动封面、内容、图片和路由，创建后会保存到云端。",
+        pageDescription: "填写活动封面、内容和图片，创建后会保存到云端。",
         submitText: "创建活动",
       };
 }
@@ -42,7 +41,6 @@ function buildEmptyState(activityId = "") {
     submitText: "创建活动",
     bannerImage: "",
     bannerUploadFiles: [],
-    bannerTitle: "",
     title: "",
     description: "",
     conclusion: "",
@@ -52,7 +50,6 @@ function buildEmptyState(activityId = "") {
     timePickerValue: "",
     timePickerVisible: false,
     activeTimeField: "",
-    routeUrl: "",
     images: [],
     uploadFiles: [],
     isBanner: true,
@@ -79,7 +76,8 @@ function createActivityFormPage() {
   return {
     data: buildEmptyState(),
     onLoad(options) {
-      const activityId = String(options.id || "").trim() || generateActivityId();
+      const activityId =
+        String(options.id || "").trim() || generateActivityId();
       this.activityId = activityId;
       this.isEditMode = Boolean(String(options.id || "").trim());
       this.hasLoadedActivity = false;
@@ -127,13 +125,11 @@ function createActivityFormPage() {
         activityId: activity.id,
         bannerImage: activity.bannerImage,
         bannerUploadFiles: buildUploadFiles([activity.bannerImage]),
-        bannerTitle: activity.bannerTitle,
         title: activity.title,
         description: activity.description,
         conclusion: activity.conclusion,
         startTime: activity.startTime,
         endTime: activity.endTime,
-        routeUrl: activity.routeUrl,
         images: activity.images,
         uploadFiles: buildUploadFiles(activity.images),
         isBanner: activity.isBanner,
@@ -201,11 +197,6 @@ function createActivityFormPage() {
         timePickerVisible: false,
         activeTimeField:
           trigger === "confirm-btn" ? this.data.activeTimeField : "",
-      });
-    },
-    onUseDetailRoute() {
-      this.setData({
-        routeUrl: buildActivityDetailRoute(this.activityId),
       });
     },
     onBannerUploadSuccess(event) {
@@ -335,25 +326,15 @@ function createActivityFormPage() {
     },
     async onSave() {
       const bannerImage = String(this.data.bannerImage || "").trim();
-      const bannerTitle = String(this.data.bannerTitle || "").trim();
       const title = String(this.data.title || "").trim();
       const description = String(this.data.description || "").trim();
       const conclusion = String(this.data.conclusion || "").trim();
       const startTime = String(this.data.startTime || "").trim();
       const endTime = String(this.data.endTime || "").trim();
-      const routeUrl = String(this.data.routeUrl || "").trim();
 
       if (!bannerImage) {
         wx.showToast({
           title: "请添加封面图片",
-          icon: "none",
-        });
-        return;
-      }
-
-      if (!bannerTitle) {
-        wx.showToast({
-          title: "请填写轮播标题",
           icon: "none",
         });
         return;
@@ -398,13 +379,11 @@ function createActivityFormPage() {
       try {
         const payload = {
           id: this.activityId,
-          bannerTitle,
           title,
           description,
           conclusion,
           startTime,
           endTime,
-          routeUrl,
           bannerImage,
           images: this.data.images,
           isBanner: this.data.isBanner,

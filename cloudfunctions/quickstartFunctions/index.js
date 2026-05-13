@@ -193,8 +193,6 @@ const insertActivity = async (event) => {
         address: address,
         conclusion: activity.conclusion,
         status: activity.status,
-        routeUrl: activity.routeUrl,
-        bannerTitle: activity.bannerTitle,
         isBanner: activity.isBanner,
       },
     });
@@ -244,8 +242,6 @@ const updateActivity = async (event) => {
           address: address,
           conclusion: activity.conclusion,
           status: activity.status,
-          routeUrl: activity.routeUrl,
-          bannerTitle: activity.bannerTitle,
           isBanner: activity.isBanner,
         },
       });

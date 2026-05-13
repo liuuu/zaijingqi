@@ -19,19 +19,6 @@ function setActivityCache(list) {
   return getActivities();
 }
 
-function normalizeRouteUrl(routeUrl) {
-  const trimmedRoute = String(routeUrl || "").trim();
-  if (!trimmedRoute) {
-    return "";
-  }
-
-  if (trimmedRoute.startsWith("/")) {
-    return trimmedRoute;
-  }
-
-  return `/${trimmedRoute}`;
-}
-
 function normalizeImageList(images) {
   if (Array.isArray(images)) {
     return images.map((image) => String(image || "").trim()).filter(Boolean);
@@ -52,14 +39,10 @@ function normalizeActivity(activity, index) {
   const activityId = source.id || `activity-${index + 1}`;
   const images = normalizeImageList(source.images);
   const defaultRouteUrl = buildActivityDetailRoute(activityId);
-  const bannerImage = String(source.bannerImage || "").trim() || images[0] || "";
+  const bannerImage = String(source.bannerImage || "").trim();
 
   return {
     id: activityId,
-    bannerTitle:
-      String(source.bannerTitle || "").trim() ||
-      String(source.title || "").trim() ||
-      `精选活动 ${index + 1}`,
     title: String(source.title || "").trim() || `活动 ${index + 1}`,
     description: String(source.description || "").trim(),
     conclusion: String(source.conclusion || "").trim(),
@@ -68,7 +51,7 @@ function normalizeActivity(activity, index) {
     isBanner: source.isBanner !== false,
     bannerImage,
     images,
-    routeUrl: normalizeRouteUrl(source.routeUrl) || defaultRouteUrl,
+    routeUrl: defaultRouteUrl,
   };
 }
 
@@ -84,6 +67,9 @@ async function insertActivityToCloud(activity) {
   if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {
     throw new Error("云能力不可用，无法创建活动");
   }
+  console.log("activity", activity);
+
+  return;
 
   const result = await wx.cloud.callFunction({
     name: "quickstartFunctions",
@@ -99,13 +85,10 @@ async function insertActivityToCloud(activity) {
         images: activity.images,
         conclusion: activity.conclusion,
         status: activity.status || (activity.isBanner ? "banner" : "normal"),
-        routeUrl: activity.routeUrl,
-        bannerTitle: activity.bannerTitle,
         isBanner: activity.isBanner,
       },
     },
   });
-  console.log("result", result);
 
   if (!result || !result.result || result.result.success !== true) {
     throw new Error(
@@ -140,7 +123,6 @@ async function selectActivitiesFromCloud() {
 }
 
 async function createActivity(activity) {
-  console.log("activity", activity);
   const source = activity || {};
   const activityId = source.id || generateActivityId();
   const normalizedActivity = normalizeActivity(
@@ -151,9 +133,7 @@ async function createActivity(activity) {
     },
     0,
   );
-  return;
-  const a = await insertActivityToCloud(normalizedActivity);
-  console.log("a", a);
+  await insertActivityToCloud(normalizedActivity);
   const nextActivities = [...getActivities(), normalizedActivity];
 
   return {

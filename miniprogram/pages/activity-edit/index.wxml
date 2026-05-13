@@ -2,9 +2,7 @@
   <view class="card">
     <view class="title">{{headingTitle}}</view>
     <view class="description">{{pageDescription}}</view>
-
     <t-divider content="Banner" />
-
     <view class="image-picker">
       <view class="image-picker__header">
         <view>
@@ -12,27 +10,8 @@
           <view class="field-help">每个活动都需要一张封面图，会用于列表、详情和轮播展示。</view>
         </view>
       </view>
-      <t-upload
-        files="{{bannerUploadFiles}}"
-        max="{{1}}"
-        mediaType="{{['image']}}"
-        source="media"
-        config="{{bannerUploadConfig}}"
-        gridConfig="{{gridConfig}}"
-        bind:add="onBannerUploadAdd"
-        bind:success="onBannerUploadSuccess"
-        bind:remove="onBannerUploadRemove"
-      />
+      <t-upload files="{{bannerUploadFiles}}" max="{{1}}" mediaType="{{['image']}}" source="media" config="{{bannerUploadConfig}}" gridConfig="{{gridConfig}}" bind:add="onBannerUploadAdd" bind:success="onBannerUploadSuccess" bind:remove="onBannerUploadRemove" />
     </view>
-
-    <t-input
-      label="轮播标题"
-      value="{{bannerTitle}}"
-      placeholder="轮播标题"
-      data-field="bannerTitle"
-      bind:change="onFieldInput"
-    />
-
     <view class="switch-row">
       <view>
         <view class="field-label field-label--compact">显示为轮播</view>
@@ -40,57 +19,14 @@
       </view>
       <t-switch value="{{isBanner}}" bind:change="onBannerChange" />
     </view>
-
     <t-divider content="活动内容" />
-
-    <t-input
-      label="标题"
-      value="{{title}}"
-      placeholder="活动标题"
-      data-field="title"
-      bind:change="onFieldInput"
-    />
-
-    <t-textarea
-      label="描述"
-      value="{{description}}"
-      placeholder="活动描述"
-      data-field="description"
-      bind:change="onFieldInput"
-      autosize="{{true}}"
-      maxlength="-1"
-    />
-
-    <t-textarea
-      label="结论"
-      value="{{conclusion}}"
-      placeholder="活动结论"
-      data-field="conclusion"
-      bind:change="onFieldInput"
-      autosize="{{true}}"
-      maxlength="-1"
-    />
-
+    <t-input label="标题" value="{{title}}" placeholder="活动标题" data-field="title" bind:change="onFieldInput" />
+    <t-textarea label="描述" value="{{description}}" placeholder="活动描述" data-field="description" bind:change="onFieldInput" autosize="{{true}}" maxlength="-1" />
+    <t-textarea label="结论" value="{{conclusion}}" placeholder="活动结论" data-field="conclusion" bind:change="onFieldInput" autosize="{{true}}" maxlength="-1" />
     <t-divider content="时间安排" />
-
-    <t-cell
-      title="开始时间"
-      note="{{startTime || '请选择开始时间'}}"
-      arrow="{{true}}"
-      hover="{{true}}"
-      bind:click="onStartTimeTap"
-    />
-
-    <t-cell
-      title="结束时间"
-      note="{{endTime || '请选择结束时间'}}"
-      arrow="{{true}}"
-      hover="{{true}}"
-      bind:click="onEndTimeTap"
-    />
-
-    <t-divider content="图片和路由" />
-
+    <t-cell title="开始时间" note="{{startTime || '请选择开始时间'}}" arrow="{{true}}" hover="{{true}}" bind:click="onStartTimeTap" />
+    <t-cell title="结束时间" note="{{endTime || '请选择结束时间'}}" arrow="{{true}}" hover="{{true}}" bind:click="onEndTimeTap" />
+    <t-divider content="图片" />
     <view class="image-picker">
       <view class="image-picker__header">
         <view>
@@ -98,44 +34,11 @@
           <view class="field-help">补充活动展示图，会上传到微信云存储并保存云文件地址。</view>
         </view>
       </view>
-      <t-upload
-        files="{{uploadFiles}}"
-        max="{{9}}"
-        mediaType="{{['image']}}"
-        source="media"
-        config="{{uploadConfig}}"
-        gridConfig="{{gridConfig}}"
-        bind:add="onUploadAdd"
-        bind:success="onUploadSuccess"
-        bind:remove="onUploadRemove"
-      />
+      <t-upload files="{{uploadFiles}}" max="{{9}}" mediaType="{{['image']}}" source="media" config="{{uploadConfig}}" gridConfig="{{gridConfig}}" bind:add="onUploadAdd" bind:success="onUploadSuccess" bind:remove="onUploadRemove" />
     </view>
-
-    <t-input
-      label="路由地址"
-      value="{{routeUrl}}"
-      placeholder="/pages/activity-detail/index?id=activity-example"
-      data-field="routeUrl"
-      bind:change="onFieldInput"
-    />
-
     <view class="action-row">
-      <t-button variant="outline" theme="default" bind:tap="onUseDetailRoute">
-        使用详情页路由
-      </t-button>
       <t-button theme="primary" bind:tap="onSave">{{submitText}}</t-button>
     </view>
-
-    <t-date-time-picker
-      title="{{timePickerTitle}}"
-      visible="{{timePickerVisible}}"
-      value="{{timePickerValue}}"
-      mode="minute"
-      format="YYYY-MM-DD HH:mm"
-      bind:change="onTimePickerConfirm"
-      bind:confirm="onTimePickerConfirm"
-      bind:cancel="hideTimePicker"
-      bind:close="onTimePickerClose"
-    />
+    <t-date-time-picker title="{{timePickerTitle}}" visible="{{timePickerVisible}}" value="{{timePickerValue}}" mode="minute" format="YYYY-MM-DD HH:mm" bind:change="onTimePickerConfirm" bind:confirm="onTimePickerConfirm" bind:cancel="hideTimePicker" bind:close="onTimePickerClose" />
   </view>
 </view>

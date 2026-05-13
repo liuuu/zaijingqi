@@ -54,7 +54,7 @@ Page({
     const bannerActivities = getBannerActivities();
     const swiperList = bannerActivities.map((activity) => ({
       value: activity.bannerImage,
-      ariaLabel: activity.bannerTitle || activity.title,
+      ariaLabel: "活动轮播图",
     }));
 
     this.setData({

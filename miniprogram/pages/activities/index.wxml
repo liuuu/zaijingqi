@@ -1,26 +1,14 @@
 <view class="page">
   <view wx:if="{{swiperList.length}}" class="swiper-section">
-    <t-swiper
-      class="activities-swiper"
-      list="{{swiperList}}"
-      height="360rpx"
-      autoplay="{{true}}"
-      duration="{{500}}"
-      interval="{{4000}}"
-      navigation="{{true}}"
-      current="{{currentBannerIndex}}"
-      imageProps="{{imageProps}}"
-      bind:change="onBannerChange"
-      bind:click="onOpenBanner"
-    />
+    <t-swiper class="activities-swiper" list="{{swiperList}}" height="360rpx" autoplay="{{true}}" duration="{{500}}" interval="{{4000}}" navigation="{{true}}" current="{{currentBannerIndex}}" imageProps="{{imageProps}}" bind:change="onBannerChange" bind:click="onOpenBanner" />
   </view>
-
   <view class="card">
     <view class="title">{{title}}</view>
     <view class="description">{{description}}</view>
     <view wx:if="{{bannerActivities.length}}" class="banner-meta">
-      <view class="banner-meta__title">{{bannerActivities[currentBannerIndex].bannerTitle}}</view>
-      <view class="banner-meta__description">{{bannerActivities[currentBannerIndex].description}}</view>
+      <view class="banner-meta__description">
+        {{bannerActivities[currentBannerIndex].description}}
+      </view>
       <view class="banner-meta__tags">
         <t-tag theme="primary" variant="light">Banner</t-tag>
         <t-tag wx:if="{{bannerActivities[currentBannerIndex].startTime}}" theme="warning" variant="light">
@@ -30,20 +18,8 @@
       <t-button theme="primary" size="large" block bind:tap="onOpenBanner">打开轮播活动</t-button>
     </view>
   </view>
-
   <view class="activity-list">
-    <t-cell
-      wx:for="{{activities}}"
-      wx:key="id"
-      class="activity-item"
-      title="{{item.title}}"
-      description="{{item.description}}"
-      note="{{item.startTime}}"
-      image="{{item.bannerImage}}"
-      arrow="{{true}}"
-      data-route-url="{{item.routeUrl}}"
-      bind:click="onOpenActivity"
-    >
+    <t-cell wx:for="{{activities}}" wx:key="id" class="activity-item" title="{{item.title}}" description="{{item.description}}" note="{{item.startTime}}" image="{{item.bannerImage}}" arrow="{{true}}" data-route-url="{{item.routeUrl}}" bind:click="onOpenActivity">
       <view slot="note">
         <view class="activity-item__note">
           <t-tag wx:if="{{item.isBanner}}" theme="primary" variant="light">轮播</t-tag>
