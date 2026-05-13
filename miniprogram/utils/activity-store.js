@@ -1,6 +1,5 @@
 const ADMIN_AUTH_STORAGE_KEY = "activity-admin-unlocked";
 const ADMIN_PASSWORD = "admin";
-const DEFAULT_ACTIVITY_IMAGE = "/images/zaijingqi.JPG";
 let activityCache = [];
 
 function buildActivityDetailRoute(activityId) {
@@ -10,48 +9,6 @@ function buildActivityDetailRoute(activityId) {
 function generateActivityId() {
   return `activity-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
-
-const DEFAULT_ACTIVITIES = [
-  {
-    id: "activity-example",
-    bannerTitle: "春日湖畔漫步",
-    title: "湖畔漫步活动",
-    description: "一场轻松的拍照散步活动，顺带进行简短分享。",
-    conclusion: "请带一件薄外套，并提前 10 分钟到场参加集合说明。",
-    startTime: "2026-05-20 09:00",
-    endTime: "2026-05-20 12:00",
-    isBanner: true,
-    bannerImage: "/images/zaijingqi.JPG",
-    images: ["/images/zaijingqi.JPG", "/images/zaijingqi1.JPG"],
-    routeUrl: buildActivityDetailRoute("activity-example"),
-  },
-  {
-    id: "activity-cloud",
-    bannerTitle: "云开发分享会",
-    title: "小程序云开发分享会",
-    description: "体验云端接入、路由配置和活动页设计的实操分享。",
-    conclusion: "请提前准备好微信开发者工具项目，方便跟着现场演示操作。",
-    startTime: "2026-05-23 14:00",
-    endTime: "2026-05-23 16:30",
-    isBanner: true,
-    bannerImage: "/images/zaijingqi1.JPG",
-    images: ["/images/zaijingqi1.JPG", "/images/zaijingqi.JPG"],
-    routeUrl: buildActivityDetailRoute("activity-cloud"),
-  },
-  {
-    id: "activity-mine",
-    bannerTitle: "志愿者对接",
-    title: "志愿者协调会议",
-    description: "确认分工、路线和现场支持细节。",
-    conclusion: "会议结束后会确认最终安排，并同步到群里。",
-    startTime: "2026-05-25 19:00",
-    endTime: "2026-05-25 20:00",
-    isBanner: false,
-    bannerImage: "/images/zaijingqi.JPG",
-    images: ["/images/zaijingqi.JPG"],
-    routeUrl: buildActivityDetailRoute("activity-mine"),
-  },
-];
 
 function cloneActivities(list) {
   return list.map((activity, index) => normalizeActivity(activity, index));
@@ -95,10 +52,7 @@ function normalizeActivity(activity, index) {
   const activityId = source.id || `activity-${index + 1}`;
   const images = normalizeImageList(source.images);
   const defaultRouteUrl = buildActivityDetailRoute(activityId);
-  const bannerImage =
-    String(source.bannerImage || "").trim() ||
-    images[0] ||
-    DEFAULT_ACTIVITY_IMAGE;
+  const bannerImage = String(source.bannerImage || "").trim() || images[0] || "";
 
   return {
     id: activityId,
@@ -113,18 +67,14 @@ function normalizeActivity(activity, index) {
     endTime: String(source.endTime || "").trim(),
     isBanner: source.isBanner !== false,
     bannerImage,
-    images: images.length > 0 ? images : [DEFAULT_ACTIVITY_IMAGE],
+    images,
     routeUrl: normalizeRouteUrl(source.routeUrl) || defaultRouteUrl,
   };
 }
 
-function getFallbackActivities() {
-  return cloneActivities(DEFAULT_ACTIVITIES);
-}
-
 function getActivities() {
-  if (!Array.isArray(activityCache) || activityCache.length === 0) {
-    return getFallbackActivities();
+  if (!Array.isArray(activityCache)) {
+    return [];
   }
 
   return cloneActivities(activityCache);
@@ -168,7 +118,7 @@ async function insertActivityToCloud(activity) {
 
 async function selectActivitiesFromCloud() {
   if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {
-    return getFallbackActivities();
+    return [];
   }
 
   const result = await wx.cloud.callFunction({
@@ -179,16 +129,14 @@ async function selectActivitiesFromCloud() {
   });
 
   if (!result || !result.result || result.result.success !== true) {
-    return getFallbackActivities();
+    return [];
   }
 
   const cloudActivities = Array.isArray(result.result.data)
     ? result.result.data
     : [];
 
-  return cloudActivities.length > 0
-    ? cloneActivities(cloudActivities)
-    : getFallbackActivities();
+  return cloneActivities(cloudActivities);
 }
 
 async function createActivity(activity) {
@@ -203,6 +151,7 @@ async function createActivity(activity) {
     },
     0,
   );
+  return;
   const a = await insertActivityToCloud(normalizedActivity);
   console.log("a", a);
   const nextActivities = [...getActivities(), normalizedActivity];

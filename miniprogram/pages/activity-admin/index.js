@@ -47,7 +47,7 @@ Page({
     const { id } = event.currentTarget.dataset;
 
     wx.navigateTo({
-      url: `/pages/activity-edit/index?id=${id}`,
+      url: `/pages/activity-create/index?id=${id}`,
     });
   },
   onPreviewActivity(event) {

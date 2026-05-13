@@ -1,7 +1,7 @@
 <view class="page">
   <view class="card">
-    <view class="title">编辑活动</view>
-    <view class="description">修改轮播内容、详情内容、图片和活动路由。</view>
+    <view class="title">{{headingTitle}}</view>
+    <view class="description">{{pageDescription}}</view>
 
     <t-divider content="Banner" />
 
@@ -123,7 +123,7 @@
       <t-button variant="outline" theme="default" bind:tap="onUseDetailRoute">
         使用详情页路由
       </t-button>
-      <t-button theme="primary" bind:tap="onSave">保存活动</t-button>
+      <t-button theme="primary" bind:tap="onSave">{{submitText}}</t-button>
     </view>
 
     <t-date-time-picker

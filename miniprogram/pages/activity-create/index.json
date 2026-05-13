@@ -1,5 +1,5 @@
 {
-  "navigationBarTitleText": "新建活动",
+  "navigationBarTitleText": "活动表单",
   "usingComponents": {
     "t-button": "tdesign-miniprogram/button/button",
     "t-divider": "tdesign-miniprogram/divider/divider",

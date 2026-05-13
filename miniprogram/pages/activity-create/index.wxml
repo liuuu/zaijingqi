@@ -1,13 +1,15 @@
 <view class="page">
   <view class="card">
-    <view class="title">新建活动</view>
+    <view class="title">{{headingTitle}}</view>
+    <view class="description">{{pageDescription}}</view>
 
-    <t-divider content="封面" />
+    <t-divider content="Banner" />
 
     <view class="image-picker">
       <view class="image-picker__header">
         <view>
           <view class="field-label field-label--compact">封面图片</view>
+          <view class="field-help">每个活动都需要一张封面图，会用于列表、详情和轮播展示。</view>
         </view>
       </view>
       <t-upload
@@ -23,10 +25,18 @@
       />
     </view>
 
+    <t-input
+      label="轮播标题"
+      value="{{bannerTitle}}"
+      placeholder="轮播标题"
+      data-field="bannerTitle"
+      bind:change="onFieldInput"
+    />
+
     <view class="switch-row">
       <view>
         <view class="field-label field-label--compact">显示为轮播</view>
-        <view class="field-help">开启后会显示在活动页顶部轮播图中。</view>
+        <view class="field-help">轮播活动会显示在顶部轮播图中。</view>
       </view>
       <t-switch value="{{isBanner}}" bind:change="onBannerChange" />
     </view>
@@ -51,7 +61,15 @@
       maxlength="-1"
     />
 
-
+    <t-textarea
+      label="结论"
+      value="{{conclusion}}"
+      placeholder="活动结论"
+      data-field="conclusion"
+      bind:change="onFieldInput"
+      autosize="{{true}}"
+      maxlength="-1"
+    />
 
     <t-divider content="时间安排" />
 
@@ -71,7 +89,7 @@
       bind:click="onEndTimeTap"
     />
 
-    <t-divider content="活动总结/图片" />
+    <t-divider content="图片和路由" />
 
     <view class="image-picker">
       <view class="image-picker__header">
@@ -92,21 +110,20 @@
         bind:remove="onUploadRemove"
       />
     </view>
-    <view>
-          <t-textarea
-          label="结论"
-          value="{{conclusion}}"
-          placeholder="活动结论"
-          data-field="conclusion"
-          bind:change="onFieldInput"
-          autosize="{{true}}"
-          maxlength="-1"
-        />
-    </view>
 
+    <t-input
+      label="路由地址"
+      value="{{routeUrl}}"
+      placeholder="/pages/activity-detail/index?id=activity-example"
+      data-field="routeUrl"
+      bind:change="onFieldInput"
+    />
 
     <view class="action-row">
-      <t-button theme="primary" bind:tap="onSave">创建活动</t-button>
+      <t-button variant="outline" theme="default" bind:tap="onUseDetailRoute">
+        使用详情页路由
+      </t-button>
+      <t-button theme="primary" bind:tap="onSave">{{submitText}}</t-button>
     </view>
 
     <t-date-time-picker
