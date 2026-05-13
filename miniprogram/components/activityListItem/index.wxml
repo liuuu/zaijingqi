@@ -1,0 +1,20 @@
+<view class="activity-card" hover-class="activity-card--hover" hover-stay-time="80" bindtap="onTap">
+  <view class="activity-card__cover-wrap">
+    <image wx:if="{{activity.bannerUrl}}" class="activity-card__cover" mode="aspectFill" src="{{activity.bannerUrl}}" />
+    <view wx:else class="activity-card__cover activity-card__cover--placeholder"></view>
+  </view>
+  <view class="activity-card__content">
+    <view class="activity-card__time">{{activity.dateLabel || activity.startTime}}</view>
+    <view class="activity-card__title">{{activity.title}}</view>
+    <view class="activity-card__description">
+      <text class="activity-card__meta-primary">
+        {{activity.detailLabel || activity.description}}
+      </text>
+    </view>
+    <view class="activity-card__meta">
+      <text wx:if="{{activity.address || activity.endTime}}" class="activity-card__meta-secondary">
+        {{activity.address || activity.endTime}}
+      </text>
+    </view>
+  </view>
+</view>

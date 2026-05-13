@@ -3,13 +3,12 @@
     <t-swiper class="activities-swiper" list="{{swiperList}}" height="360rpx" autoplay="{{true}}" duration="{{500}}" interval="{{4000}}" navigation="{{true}}" current="{{currentBannerIndex}}" imageProps="{{imageProps}}" bind:change="onBannerChange" bind:click="onOpenBanner" />
   </view>
   <view class="activity-list">
-    <t-cell wx:for="{{activities}}" wx:key="id" class="activity-item" title="{{item.title}}" description="{{item.description}}" note="{{item.startTime}}" image="{{item.bannerUrl}}" arrow="{{true}}" data-route-url="{{item.routeUrl}}" bind:click="onOpenActivity">
-      <view slot="note">
-        <view class="activity-item__note">
-          <t-tag wx:if="{{item.isBanner}}" theme="primary" variant="light">轮播</t-tag>
-          <t-tag wx:if="{{item.endTime}}" theme="success" variant="light">{{item.endTime}}</t-tag>
-        </view>
-      </view>
-    </t-cell>
+    <activity-list-item
+      wx:for="{{activities}}"
+      wx:key="id"
+      activity="{{item}}"
+      data-route-url="{{item.routeUrl}}"
+      bind:tap="onOpenActivity"
+    />
   </view>
 </view>
