@@ -61,3 +61,37 @@ page {
 .action-row t-button {
   flex: 1;
 }
+
+.image-picker {
+  margin-top: 24rpx;
+}
+
+.image-picker__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20rpx;
+  margin-top: 20rpx;
+}
+
+.image-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.image-item__preview {
+  height: 220rpx;
+  border-radius: 20rpx;
+  overflow: hidden;
+}
+
+.image-item__remove {
+  width: 100%;
+}

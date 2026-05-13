@@ -1,8 +1,8 @@
 const {
   createActivity,
   isAdminUnlocked,
-  normalizeImageList,
 } = require("../../utils/activity-store");
+const { chooseAndUploadImages } = require("../../utils/activity-image");
 
 Page({
   data: {
@@ -13,8 +13,17 @@ Page({
     startTime: "",
     endTime: "",
     routeUrl: "",
-    imagesText: "/images/zaijingqi.JPG",
+    images: ["/images/zaijingqi.JPG"],
     isBanner: true,
+    isUploading: false,
+    gridConfig: {
+      column: 4,
+      width: 160,
+      height: 160,
+    },
+    config: {
+      count: 1,
+    },
   },
   onShow() {
     if (!isAdminUnlocked()) {
@@ -25,6 +34,7 @@ Page({
       wx.switchTab({
         url: "/pages/mine/index",
       });
+      return;
     }
   },
   onFieldInput(event) {
@@ -44,6 +54,46 @@ Page({
       routeUrl: "",
     });
   },
+  async handleUploadSuccess() {
+    const remainingCount = 9 - this.data.images.length;
+
+    if (remainingCount <= 0) {
+      wx.showToast({
+        title: "最多上传 9 张图片",
+        icon: "none",
+      });
+      return;
+    }
+
+    this.setData({ isUploading: true });
+    wx.showLoading({ title: "上传中..." });
+
+    try {
+      const uploadedImages = await chooseAndUploadImages(remainingCount);
+      console.log("uploadImages", uploadedImages);
+      this.setData({
+        images: [...this.data.images, ...uploadedImages],
+      });
+    } catch (error) {
+      wx.showToast({
+        title: "图片上传失败",
+        icon: "none",
+      });
+    } finally {
+      this.setData({ isUploading: false });
+      wx.hideLoading();
+    }
+  },
+  handleUploadRemove(event) {
+    const { index } = event.currentTarget.dataset;
+    const nextImages = this.data.images.filter(
+      (_, currentIndex) => currentIndex !== Number(index),
+    );
+
+    this.setData({
+      images: nextImages,
+    });
+  },
   onSave() {
     const bannerTitle = String(this.data.bannerTitle || "").trim();
     const title = String(this.data.title || "").trim();
@@ -51,8 +101,6 @@ Page({
     const conclusion = String(this.data.conclusion || "").trim();
     const startTime = String(this.data.startTime || "").trim();
     const endTime = String(this.data.endTime || "").trim();
-    const images = normalizeImageList(this.data.imagesText);
-    const routeUrl = String(this.data.routeUrl || "").trim();
 
     if (!bannerTitle) {
       wx.showToast({
@@ -70,7 +118,7 @@ Page({
       return;
     }
 
-    if (images.length === 0) {
+    if (this.data.images.length === 0) {
       wx.showToast({
         title: "请至少添加一张图片",
         icon: "none",
@@ -94,7 +142,7 @@ Page({
       startTime,
       endTime,
       routeUrl,
-      images,
+      images: this.data.images,
       isBanner: this.data.isBanner,
     });
 

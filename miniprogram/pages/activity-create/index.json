@@ -3,8 +3,10 @@
   "usingComponents": {
     "t-button": "tdesign-miniprogram/button/button",
     "t-divider": "tdesign-miniprogram/divider/divider",
+    "t-image": "tdesign-miniprogram/image/image",
     "t-input": "tdesign-miniprogram/input/input",
     "t-switch": "tdesign-miniprogram/switch/switch",
-    "t-textarea": "tdesign-miniprogram/textarea/textarea"
+    "t-textarea": "tdesign-miniprogram/textarea/textarea",
+    "t-upload": "tdesign-miniprogram/upload/upload"
   }
 }

@@ -69,15 +69,26 @@
 
     <t-divider content="图片和路由" />
 
-    <t-textarea
-      label="图片"
-      value="{{imagesText}}"
-      placeholder="每行填写一张图片地址或本地路径"
-      data-field="imagesText"
-      bind:change="onFieldInput"
-      autosize="{{true}}"
-      maxlength="-1"
-    />
+    <view class="image-picker">
+      <view class="image-picker__header">
+        <view>
+          <view class="field-label field-label--compact">图片</view>
+          <view class="field-help">图片会上传到微信云存储，并保存云文件地址。</view>
+        </view>
+        <t-button variant="outline" theme="primary" size="small" bind:tap="onUploadImages" loading="{{isUploading}}">
+          上传图片
+        </t-button>
+      </view>
+
+      <view wx:if="{{images.length}}" class="image-grid">
+        <view wx:for="{{images}}" wx:key="*this" class="image-item">
+          <t-image class="image-item__preview" src="{{item}}" mode="aspectFill" />
+          <t-button class="image-item__remove" theme="default" variant="outline" size="small" data-index="{{index}}" bind:tap="onRemoveImage">
+            删除
+          </t-button>
+        </view>
+      </view>
+    </view>
 
     <t-input
       label="路由地址"
