@@ -2,7 +2,10 @@ const {
   createActivity,
   isAdminUnlocked,
 } = require("../../utils/activity-store");
-const { chooseAndUploadImages } = require("../../utils/activity-image");
+const {
+  getUploadUrls,
+  uploadImageFile,
+} = require("../../utils/activity-image");
 
 Page({
   data: {
@@ -13,7 +16,8 @@ Page({
     startTime: "",
     endTime: "",
     routeUrl: "",
-    images: ["/images/zaijingqi.JPG"],
+    images: [],
+    uploadFiles: [],
     isBanner: true,
     isUploading: false,
     gridConfig: {
@@ -21,8 +25,10 @@ Page({
       width: 160,
       height: 160,
     },
-    config: {
-      count: 1,
+    uploadConfig: {
+      count: 9,
+      sourceType: ["album", "camera"],
+      sizeType: ["compressed"],
     },
   },
   onShow() {
@@ -54,27 +60,54 @@ Page({
       routeUrl: "",
     });
   },
-  async handleUploadSuccess() {
-    const remainingCount = 9 - this.data.images.length;
+  onUploadSuccess(event) {
+    const uploadedFiles = event.detail.files || [];
 
-    if (remainingCount <= 0) {
-      wx.showToast({
-        title: "最多上传 9 张图片",
-        icon: "none",
-      });
+    this.setData({
+      uploadFiles: uploadedFiles,
+      images: getUploadUrls(uploadedFiles),
+    });
+  },
+  async onUploadAdd(event) {
+    const selectedFiles = event.detail.files || [];
+
+    if (!selectedFiles.length) {
       return;
     }
 
+    const previousFiles = [...this.data.uploadFiles];
     this.setData({ isUploading: true });
     wx.showLoading({ title: "上传中..." });
 
     try {
-      const uploadedImages = await chooseAndUploadImages(remainingCount);
-      console.log("uploadImages", uploadedImages);
+      const nextFiles = [...this.data.uploadFiles];
+
+      for (const file of selectedFiles) {
+        const result = await uploadImageFile(file.url);
+        const uploadedFile = {
+          ...file,
+          url: result.fileID,
+          status: "done",
+          percent: 100,
+        };
+        const index = nextFiles.findIndex((item) => item.name === uploadedFile.name);
+
+        if (index >= 0) {
+          nextFiles[index] = uploadedFile;
+        } else {
+          nextFiles.push(uploadedFile);
+        }
+      }
+
       this.setData({
-        images: [...this.data.images, ...uploadedImages],
+        uploadFiles: nextFiles,
+        images: getUploadUrls(nextFiles),
       });
     } catch (error) {
+      this.setData({
+        uploadFiles: previousFiles,
+        images: getUploadUrls(previousFiles),
+      });
       wx.showToast({
         title: "图片上传失败",
         icon: "none",
@@ -84,14 +117,15 @@ Page({
       wx.hideLoading();
     }
   },
-  handleUploadRemove(event) {
+  onUploadRemove(event) {
     const { index } = event.currentTarget.dataset;
-    const nextImages = this.data.images.filter(
+    const nextFiles = this.data.uploadFiles.filter(
       (_, currentIndex) => currentIndex !== Number(index),
     );
 
     this.setData({
-      images: nextImages,
+      uploadFiles: nextFiles,
+      images: getUploadUrls(nextFiles),
     });
   },
   onSave() {
@@ -101,6 +135,7 @@ Page({
     const conclusion = String(this.data.conclusion || "").trim();
     const startTime = String(this.data.startTime || "").trim();
     const endTime = String(this.data.endTime || "").trim();
+    const routeUrl = String(this.data.routeUrl || "").trim();
 
     if (!bannerTitle) {
       wx.showToast({

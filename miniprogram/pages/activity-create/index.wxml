@@ -69,18 +69,39 @@
 
     <t-divider content="图片" />
 
-
-    <view class="wrapper">
+    <view class="image-picker">
+      <view class="image-picker__header">
+        <view>
+          <view class="field-label field-label--compact">图片</view>
+          <view class="field-help">图片会上传到微信云存储，并保存云文件地址。</view>
+        </view>
+      </view>
       <t-upload
+        files="{{uploadFiles}}"
+        max="{{9}}"
         mediaType="{{['image']}}"
-        files="{{images}}"
+        source="media"
+        config="{{uploadConfig}}"
         gridConfig="{{gridConfig}}"
-        config="{{config}}"
-        source="messageFile"
-        bind:success="handleUploadSuccess"
-        bind:remove="handleUploadRemove"
-      >
-      </t-upload>
+        bind:add="onUploadAdd"
+        bind:success="onUploadSuccess"
+        bind:remove="onUploadRemove"
+      />
+    </view>
+
+    <t-input
+      label="路由地址"
+      value="{{routeUrl}}"
+      placeholder="留空则自动生成详情页路由"
+      data-field="routeUrl"
+      bind:change="onFieldInput"
+    />
+
+    <view class="action-row">
+      <t-button variant="outline" theme="default" bind:tap="onUseDetailRoute">
+        恢复默认路由
+      </t-button>
+      <t-button theme="primary" bind:tap="onSave">创建活动</t-button>
     </view>
   </view>
 </view>

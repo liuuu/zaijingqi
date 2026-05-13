@@ -8,6 +8,7 @@ Page({
     activities: [],
   },
   onLoad() {
+    return;
     wx.cloud
       .callFunction({
         name: "quickstartFunctions",

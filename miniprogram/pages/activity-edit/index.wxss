@@ -14,14 +14,14 @@ page {
 }
 
 .title {
-  font-size: 36rpx;
+  font-size: 40rpx;
   font-weight: 600;
   color: #111111;
+  margin-bottom: 16rpx;
 }
 
 .description {
-  margin-top: 12rpx;
-  font-size: 26rpx;
+  font-size: 28rpx;
   line-height: 1.6;
   color: #666666;
 }
@@ -52,6 +52,14 @@ page {
   color: #999999;
 }
 
+.image-picker {
+  margin-top: 24rpx;
+}
+
+.image-picker__header {
+  margin-bottom: 20rpx;
+}
+
 .action-row {
   display: flex;
   gap: 20rpx;
@@ -60,38 +68,4 @@ page {
 
 .action-row t-button {
   flex: 1;
-}
-
-.image-picker {
-  margin-top: 24rpx;
-}
-
-.image-picker__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20rpx;
-}
-
-.image-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20rpx;
-  margin-top: 20rpx;
-}
-
-.image-item {
-  display: flex;
-  flex-direction: column;
-  gap: 12rpx;
-}
-
-.image-item__preview {
-  height: 220rpx;
-  border-radius: 20rpx;
-  overflow: hidden;
-}
-
-.image-item__remove {
-  width: 100%;
 }

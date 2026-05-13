@@ -15,29 +15,22 @@ function uploadImageFile(tempFilePath) {
   });
 }
 
-async function chooseAndUploadImages(maxCount) {
-  const chooseResult = await new Promise((resolve, reject) => {
-    wx.chooseMedia({
-      count: maxCount,
-      mediaType: ["image"],
-      sourceType: ["album", "camera"],
-      success: resolve,
-      fail: reject,
-    });
-  });
+function buildUploadFiles(imageUrls) {
+  return (Array.isArray(imageUrls) ? imageUrls : []).map((url) => ({
+    url,
+    status: "done",
+    percent: 100,
+  }));
+}
 
-  const files = chooseResult.tempFiles || [];
-  const uploadResults = [];
-
-  for (const file of files) {
-    const result = await uploadImageFile(file.tempFilePath);
-    uploadResults.push(result.fileID);
-  }
-
-  return uploadResults;
+function getUploadUrls(files) {
+  return (Array.isArray(files) ? files : [])
+    .map((file) => String(file && file.url ? file.url : "").trim())
+    .filter(Boolean);
 }
 
 module.exports = {
-  chooseAndUploadImages,
+  buildUploadFiles,
+  getUploadUrls,
   uploadImageFile,
 };

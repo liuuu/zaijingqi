@@ -4,7 +4,11 @@ const {
   isAdminUnlocked,
   updateActivity,
 } = require("../../utils/activity-store");
-const { chooseAndUploadImages } = require("../../utils/activity-image");
+const {
+  buildUploadFiles,
+  getUploadUrls,
+  uploadImageFile,
+} = require("../../utils/activity-image");
 
 Page({
   data: {
@@ -17,8 +21,19 @@ Page({
     endTime: "",
     routeUrl: "",
     images: [],
+    uploadFiles: [],
     isBanner: true,
     isUploading: false,
+    gridConfig: {
+      column: 4,
+      width: 160,
+      height: 160,
+    },
+    uploadConfig: {
+      count: 9,
+      sourceType: ["album", "camera"],
+      sizeType: ["compressed"],
+    },
   },
   onLoad(options) {
     this.activityId = options.id || "";
@@ -56,6 +71,7 @@ Page({
       endTime: activity.endTime,
       routeUrl: activity.routeUrl,
       images: activity.images,
+      uploadFiles: buildUploadFiles(activity.images),
       isBanner: activity.isBanner,
     });
   },
@@ -76,26 +92,54 @@ Page({
       routeUrl: buildActivityDetailRoute(this.data.activityId),
     });
   },
-  async onUploadImages() {
-    const remainingCount = 9 - this.data.images.length;
+  onUploadSuccess(event) {
+    const uploadedFiles = event.detail.files || [];
 
-    if (remainingCount <= 0) {
-      wx.showToast({
-        title: "最多上传 9 张图片",
-        icon: "none",
-      });
+    this.setData({
+      uploadFiles: uploadedFiles,
+      images: getUploadUrls(uploadedFiles),
+    });
+  },
+  async onUploadAdd(event) {
+    const selectedFiles = event.detail.files || [];
+
+    if (!selectedFiles.length) {
       return;
     }
 
+    const previousFiles = [...this.data.uploadFiles];
     this.setData({ isUploading: true });
     wx.showLoading({ title: "上传中..." });
 
     try {
-      const uploadedImages = await chooseAndUploadImages(remainingCount);
+      const nextFiles = [...this.data.uploadFiles];
+
+      for (const file of selectedFiles) {
+        const result = await uploadImageFile(file.url);
+        const uploadedFile = {
+          ...file,
+          url: result.fileID,
+          status: "done",
+          percent: 100,
+        };
+        const index = nextFiles.findIndex((item) => item.name === uploadedFile.name);
+
+        if (index >= 0) {
+          nextFiles[index] = uploadedFile;
+        } else {
+          nextFiles.push(uploadedFile);
+        }
+      }
+
       this.setData({
-        images: [...this.data.images, ...uploadedImages],
+        uploadFiles: nextFiles,
+        images: getUploadUrls(nextFiles),
       });
     } catch (error) {
+      this.setData({
+        uploadFiles: previousFiles,
+        images: getUploadUrls(previousFiles),
+      });
       wx.showToast({
         title: "图片上传失败",
         icon: "none",
@@ -105,12 +149,15 @@ Page({
       wx.hideLoading();
     }
   },
-  onRemoveImage(event) {
+  onUploadRemove(event) {
     const { index } = event.currentTarget.dataset;
-    const nextImages = this.data.images.filter((_, currentIndex) => currentIndex !== Number(index));
+    const nextFiles = this.data.uploadFiles.filter(
+      (_, currentIndex) => currentIndex !== Number(index),
+    );
 
     this.setData({
-      images: nextImages,
+      uploadFiles: nextFiles,
+      images: getUploadUrls(nextFiles),
     });
   },
   onSave() {
@@ -138,17 +185,17 @@ Page({
       return;
     }
 
-    if (!routeUrl.startsWith("/pages/")) {
+    if (this.data.images.length === 0) {
       wx.showToast({
-        title: "请使用 /pages/ 路由",
+        title: "请至少添加一张图片",
         icon: "none",
       });
       return;
     }
 
-    if (this.data.images.length === 0) {
+    if (routeUrl && !routeUrl.startsWith("/pages/")) {
       wx.showToast({
-        title: "请至少添加一张图片",
+        title: "请使用 /pages/ 路由",
         icon: "none",
       });
       return;
