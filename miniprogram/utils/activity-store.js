@@ -17,8 +17,7 @@ const DEFAULT_ACTIVITIES = [
     bannerTitle: "春日湖畔漫步",
     title: "湖畔漫步活动",
     description: "一场轻松的拍照散步活动，顺带进行简短分享。",
-    conclusion:
-      "请带一件薄外套，并提前 10 分钟到场参加集合说明。",
+    conclusion: "请带一件薄外套，并提前 10 分钟到场参加集合说明。",
     startTime: "2026-05-20 09:00",
     endTime: "2026-05-20 12:00",
     isBanner: true,
@@ -30,10 +29,8 @@ const DEFAULT_ACTIVITIES = [
     id: "activity-cloud",
     bannerTitle: "云开发分享会",
     title: "小程序云开发分享会",
-    description:
-      "体验云端接入、路由配置和活动页设计的实操分享。",
-    conclusion:
-      "请提前准备好微信开发者工具项目，方便跟着现场演示操作。",
+    description: "体验云端接入、路由配置和活动页设计的实操分享。",
+    conclusion: "请提前准备好微信开发者工具项目，方便跟着现场演示操作。",
     startTime: "2026-05-23 14:00",
     endTime: "2026-05-23 16:30",
     isBanner: true,
@@ -46,8 +43,7 @@ const DEFAULT_ACTIVITIES = [
     bannerTitle: "志愿者对接",
     title: "志愿者协调会议",
     description: "确认分工、路线和现场支持细节。",
-    conclusion:
-      "会议结束后会确认最终安排，并同步到群里。",
+    conclusion: "会议结束后会确认最终安排，并同步到群里。",
     startTime: "2026-05-25 19:00",
     endTime: "2026-05-25 20:00",
     isBanner: false,
@@ -100,7 +96,9 @@ function normalizeActivity(activity, index) {
   const images = normalizeImageList(source.images);
   const defaultRouteUrl = buildActivityDetailRoute(activityId);
   const bannerImage =
-    String(source.bannerImage || "").trim() || images[0] || DEFAULT_ACTIVITY_IMAGE;
+    String(source.bannerImage || "").trim() ||
+    images[0] ||
+    DEFAULT_ACTIVITY_IMAGE;
 
   return {
     id: activityId,
@@ -157,9 +155,12 @@ async function insertActivityToCloud(activity) {
       },
     },
   });
+  console.log("result", result);
 
   if (!result || !result.result || result.result.success !== true) {
-    throw new Error((result && result.result && result.result.errMsg) || "创建活动失败");
+    throw new Error(
+      (result && result.result && result.result.errMsg) || "创建活动失败",
+    );
   }
 
   return result.result;
@@ -191,20 +192,19 @@ async function selectActivitiesFromCloud() {
 }
 
 async function createActivity(activity) {
+  console.log("activity", activity);
   const source = activity || {};
   const activityId = source.id || generateActivityId();
   const normalizedActivity = normalizeActivity(
     {
       ...source,
       id: activityId,
-      bannerImage:
-        source.bannerImage ||
-        (Array.isArray(source.images) ? source.images[0] : ""),
-      routeUrl: source.routeUrl || buildActivityDetailRoute(activityId),
+      bannerImage: source.bannerImage,
     },
-    0
+    0,
   );
-  await insertActivityToCloud(normalizedActivity);
+  const a = await insertActivityToCloud(normalizedActivity);
+  console.log("a", a);
   const nextActivities = [...getActivities(), normalizedActivity];
 
   return {
@@ -223,7 +223,9 @@ function getActivityById(activityId) {
 }
 
 function getBannerActivities() {
-  const bannerActivities = getActivities().filter((activity) => activity.isBanner);
+  const bannerActivities = getActivities().filter(
+    (activity) => activity.isBanner,
+  );
   return bannerActivities.length > 0 ? bannerActivities : getActivities();
 }
 
@@ -254,7 +256,9 @@ async function updateActivity(activityId, updates) {
   });
 
   if (!result || !result.result || result.result.success !== true) {
-    throw new Error((result && result.result && result.result.errMsg) || "保存活动失败");
+    throw new Error(
+      (result && result.result && result.result.errMsg) || "保存活动失败",
+    );
   }
 
   return setActivityCache(

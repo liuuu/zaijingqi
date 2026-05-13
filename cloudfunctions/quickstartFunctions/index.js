@@ -181,7 +181,7 @@ const address = "在惊奇AI探索空间";
 const insertActivity = async (event) => {
   try {
     const activity = event.data;
-    await db.collection("activities").add({
+    const data = await db.collection("activities").add({
       data: {
         id: activity.id,
         title: activity.title,
@@ -201,6 +201,7 @@ const insertActivity = async (event) => {
     return {
       success: true,
       data: event.data,
+      returnData: data,
     };
   } catch (e) {
     return {

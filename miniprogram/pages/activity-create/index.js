@@ -321,6 +321,7 @@ Page({
 
       wx.navigateBack();
     } catch (error) {
+      console.log("error", error);
       wx.showToast({
         title: error.message || "创建失败",
         icon: "none",
