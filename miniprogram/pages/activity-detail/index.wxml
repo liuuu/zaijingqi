@@ -9,11 +9,11 @@
     <view class="banner-overlay__subtitle">{{activity.title}}</view>
     <view class="description">{{activity.description}}</view>
     <view class="tag-row">
-      <t-tag wx:if="{{activity.startTime}}" theme="warning" variant="light">
-        开始 {{activity.startTime}}
+      <t-tag wx:if="{{activity.startTimeStr || activity.startTime}}" theme="warning" variant="light">
+        开始 {{activity.startTimeStr || activity.startTime}}
       </t-tag>
-      <t-tag wx:if="{{activity.endTime}}" theme="success" variant="light">
-        结束 {{activity.endTime}}
+      <t-tag wx:if="{{activity.endTimeStr || activity.endTime}}" theme="success" variant="light">
+        结束 {{activity.endTimeStr || activity.endTime}}
       </t-tag>
     </view>
   </view>

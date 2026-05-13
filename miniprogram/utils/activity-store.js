@@ -1,7 +1,9 @@
+const dayjs = require("dayjs");
 const { normalizeImageUrl, normalizeImageUrls } = require("./activity-image");
 
 const ADMIN_AUTH_STORAGE_KEY = "activity-admin-unlocked";
 const ADMIN_PASSWORD = "admin";
+const WEEKDAY_LABELS = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
 let activityCache = [];
 
 function buildActivityDetailRoute(activityId) {
@@ -10,6 +12,80 @@ function buildActivityDetailRoute(activityId) {
 
 function generateActivityId() {
   return `activity-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function toTimestamp(value) {
+  const text = String(value ?? "").trim();
+
+  if (!text) {
+    throw new Error("时间不能为空");
+  }
+
+  if (/^\d+$/.test(text)) {
+    const timestamp = Number(text);
+    if (Number.isFinite(timestamp)) {
+      return timestamp;
+    }
+  }
+
+  const timestamp = dayjs(text.replace(" ", "T")).valueOf();
+  if (!Number.isFinite(timestamp)) {
+    throw new Error("时间格式无效");
+  }
+
+  return timestamp;
+}
+
+function formatActivityTime(value) {
+  if (value === undefined || value === null || value === "") {
+    return "";
+  }
+
+  const timestamp = Number(value);
+  const time = Number.isFinite(timestamp)
+    ? dayjs(timestamp)
+    : dayjs(String(value).replace(" ", "T"));
+
+  if (!time.isValid()) {
+    return String(value).trim();
+  }
+
+  return `${time.format("M.D")} ${WEEKDAY_LABELS[time.day()]} ${time.format(
+    "HH:mm",
+  )}`;
+}
+
+function buildActivityTimeFields(activity) {
+  const startTime = toTimestamp(activity.startTime);
+  const endTime = toTimestamp(activity.endTime);
+
+  return {
+    startTime,
+    endTime,
+    startTimeStr: formatActivityTime(startTime),
+    endTimeStr: formatActivityTime(endTime),
+  };
+}
+
+function normalizeActivity(activity) {
+  if (!activity) {
+    return activity;
+  }
+
+  const startTime = Number(activity.startTime);
+  const endTime = Number(activity.endTime);
+  const startTimeStr = formatActivityTime(activity.startTimeStr || startTime);
+  const endTimeStr = formatActivityTime(activity.endTimeStr || endTime);
+
+  return {
+    ...activity,
+    bannerUrl: normalizeImageUrl(activity.bannerUrl),
+    images: normalizeImageUrls(activity.images),
+    startTime: Number.isFinite(startTime) ? startTime : activity.startTime,
+    endTime: Number.isFinite(endTime) ? endTime : activity.endTime,
+    startTimeStr,
+    endTimeStr,
+  };
 }
 
 async function insertActivityToCloud(activity) {
@@ -25,8 +101,7 @@ async function insertActivityToCloud(activity) {
         id: activity.id,
         title: activity.title,
         description: activity.description,
-        startTime: activity.startTime,
-        endTime: activity.endTime,
+        ...buildActivityTimeFields(activity),
         bannerUrl: normalizeImageUrl(activity.bannerUrl),
         images: normalizeImageUrls(activity.images),
         conclusion: activity.conclusion,
@@ -65,11 +140,7 @@ async function selectActivitiesFromCloud() {
     ? result.result.data
     : [];
 
-  return cloudActivities.map((activity) => ({
-    ...activity,
-    bannerUrl: normalizeImageUrl(activity.bannerUrl),
-    images: normalizeImageUrls(activity.images),
-  }));
+  return cloudActivities.map((activity) => normalizeActivity(activity));
 }
 
 async function selectActivityFromCloud(activityId) {
@@ -95,13 +166,7 @@ async function selectActivityFromCloud(activityId) {
     return null;
   }
 
-  return result.result.data
-    ? {
-        ...result.result.data,
-        bannerUrl: normalizeImageUrl(result.result.data.bannerUrl),
-        images: normalizeImageUrls(result.result.data.images),
-      }
-    : null;
+  return result.result.data ? normalizeActivity(result.result.data) : null;
 }
 
 async function createActivity(activity) {
@@ -112,11 +177,12 @@ async function createActivity(activity) {
     id: activityId,
     bannerUrl: normalizeImageUrl(source.bannerUrl),
     images: normalizeImageUrls(source.images),
+    ...buildActivityTimeFields(source),
   };
   await insertActivityToCloud(normalizedActivity);
 
   return {
-    activity: normalizedActivity,
+    activity: normalizeActivity(normalizedActivity),
   };
 }
 
@@ -137,6 +203,7 @@ async function updateActivity(activityId, updates) {
     id: activityId,
     bannerUrl: normalizeImageUrl(updates.bannerUrl),
     images: normalizeImageUrls(updates.images),
+    ...buildActivityTimeFields(updates),
   };
 
   if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {
@@ -218,4 +285,5 @@ module.exports = {
   unlockAdmin,
   lockAdmin,
   checkPassword,
+  formatActivityTime,
 };

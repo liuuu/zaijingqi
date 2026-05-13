@@ -8,10 +8,10 @@
   </view>
   <view wx:for="{{activities}}" wx:key="id" class="activity-card">
     <t-image class="activity-card__cover" src="{{item.bannerUrl}}" mode="aspectFill" />
-    <t-cell description="{{item.description}}" note="{{item.startTime}}" />
+    <t-cell description="{{item.description}}" note="{{item.startTimeStr || item.startTime}}" />
     <view class="activity-card__meta">
       <t-tag wx:if="{{item.isBanner}}" theme="primary" variant="light">轮播</t-tag>
-      <t-tag wx:if="{{item.endTime}}" theme="success" variant="light">{{item.endTime}}</t-tag>
+      <t-tag wx:if="{{item.endTimeStr || item.endTime}}" theme="success" variant="light">{{item.endTimeStr || item.endTime}}</t-tag>
     </view>
     <view class="activity-card__route">{{item.routeUrl}}</view>
     <view class="activity-card__actions">
