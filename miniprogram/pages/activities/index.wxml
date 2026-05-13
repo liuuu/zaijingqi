@@ -1,4 +1,17 @@
 <view class="page">
+  <view class="swiper-section">
+    <t-swiper
+      class="activities-swiper"
+      list="{{swiperList}}"
+      height="360rpx"
+      autoplay="{{true}}"
+      duration="{{500}}"
+      interval="{{4000}}"
+      navigation="{{true}}"
+      imageProps="{{imageProps}}"
+    />
+  </view>
+
   <view class="card">
     <view class="title">{{title}}</view>
     <view class="description">{{description}}</view>
