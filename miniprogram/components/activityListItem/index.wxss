@@ -53,6 +53,7 @@
   color: #111111;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -74,4 +75,15 @@
 
 .activity-card__meta-secondary {
   color: #999999;
+}
+.activity-card__description {
+  margin-top: 12rpx;
+  font-size: 28rpx;
+  line-height: 1.5;
+  color: #666666;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

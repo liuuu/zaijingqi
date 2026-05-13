@@ -6,11 +6,7 @@
   <view class="activity-card__content">
     <view class="activity-card__time">{{activity.dateLabel || activity.startTime}}</view>
     <view class="activity-card__title">{{activity.title}}</view>
-    <view class="activity-card__description">
-      <text class="activity-card__meta-primary">
-        {{activity.detailLabel || activity.description}}
-      </text>
-    </view>
+    <view class="activity-card__description">{{activity.detailLabel || activity.description}}</view>
     <view class="activity-card__meta">
       <text wx:if="{{activity.address || activity.endTime}}" class="activity-card__meta-secondary">
         {{activity.address || activity.endTime}}
