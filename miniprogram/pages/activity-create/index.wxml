@@ -60,8 +60,7 @@
       note="{{startTime || '请选择开始时间'}}"
       arrow="{{true}}"
       hover="{{true}}"
-      data-field="startTime"
-      bind:click="showTimePicker"
+      bind:click="onStartTimeTap"
     />
 
     <t-cell
@@ -69,8 +68,7 @@
       note="{{endTime || '请选择结束时间'}}"
       arrow="{{true}}"
       hover="{{true}}"
-      data-field="endTime"
-      bind:click="showTimePicker"
+      bind:click="onEndTimeTap"
     />
 
     <t-divider content="活动总结/图片" />
@@ -118,8 +116,9 @@
       mode="minute"
       format="YYYY-MM-DD HH:mm"
       bind:change="onTimePickerConfirm"
+      bind:confirm="onTimePickerConfirm"
       bind:cancel="hideTimePicker"
-      bind:close="hideTimePicker"
+      bind:close="onTimePickerClose"
     />
   </view>
 </view>

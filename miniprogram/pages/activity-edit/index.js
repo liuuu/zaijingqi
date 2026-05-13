@@ -1,6 +1,7 @@
 const {
   buildActivityDetailRoute,
   getActivityById,
+  loadActivities,
   isAdminUnlocked,
   updateActivity,
 } = require("../../utils/activity-store");
@@ -50,7 +51,7 @@ Page({
   onLoad(options) {
     this.activityId = options.id || "";
   },
-  onShow() {
+  async onShow() {
     if (!isAdminUnlocked()) {
       wx.showToast({
         title: "请先输入密码",
@@ -62,6 +63,7 @@ Page({
       return;
     }
 
+    await loadActivities();
     const activity = getActivityById(this.activityId);
 
     if (!activity) {
@@ -101,8 +103,7 @@ Page({
       isBanner: event.detail.value,
     });
   },
-  showTimePicker(event) {
-    const { field } = event.currentTarget.dataset;
+  showTimePicker(field) {
     const value = String(this.data[field] || dayjs().format("YYYY-MM-DD HH:mm")).trim();
     const titles = {
       startTime: "选择开始时间",
@@ -116,6 +117,12 @@ Page({
       timePickerVisible: true,
     });
   },
+  onStartTimeTap() {
+    this.showTimePicker("startTime");
+  },
+  onEndTimeTap() {
+    this.showTimePicker("endTime");
+  },
   hideTimePicker() {
     this.setData({
       activeTimeField: "",
@@ -123,7 +130,7 @@ Page({
     });
   },
   onTimePickerConfirm(event) {
-    const { value } = event.detail;
+    const value = event.detail?.value || this.data.timePickerValue;
     const { activeTimeField } = this.data;
 
     if (!activeTimeField) {
@@ -135,6 +142,14 @@ Page({
       timePickerValue: value,
       timePickerVisible: false,
       activeTimeField: "",
+    });
+  },
+  onTimePickerClose(event) {
+    const trigger = event.detail?.trigger;
+
+    this.setData({
+      timePickerVisible: false,
+      activeTimeField: trigger === "confirm-btn" ? this.data.activeTimeField : "",
     });
   },
   onBannerUploadSuccess(event) {
@@ -265,7 +280,7 @@ Page({
       images: getUploadUrls(nextFiles),
     });
   },
-  onSave() {
+  async onSave() {
     const bannerImage = String(this.data.bannerImage || "").trim();
     const bannerTitle = String(this.data.bannerTitle || "").trim();
     const title = String(this.data.title || "").trim();
@@ -315,24 +330,37 @@ Page({
       return;
     }
 
-    updateActivity(this.data.activityId, {
-      bannerTitle,
-      title,
-      description,
-      conclusion,
-      startTime,
-      endTime,
-      routeUrl,
-      bannerImage,
-      images: this.data.images,
-      isBanner: this.data.isBanner,
+    wx.showLoading({
+      title: "保存中...",
     });
 
-    wx.showToast({
-      title: "活动已保存",
-      icon: "success",
-    });
+    try {
+      await updateActivity(this.data.activityId, {
+        bannerTitle,
+        title,
+        description,
+        conclusion,
+        startTime,
+        endTime,
+        routeUrl,
+        bannerImage,
+        images: this.data.images,
+        isBanner: this.data.isBanner,
+      });
 
-    wx.navigateBack();
+      wx.showToast({
+        title: "活动已保存",
+        icon: "success",
+      });
+
+      wx.navigateBack();
+    } catch (error) {
+      wx.showToast({
+        title: error.message || "保存失败",
+        icon: "none",
+      });
+    } finally {
+      wx.hideLoading();
+    }
   },
 });

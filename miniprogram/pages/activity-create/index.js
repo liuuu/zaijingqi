@@ -66,9 +66,10 @@ Page({
       isBanner: event.detail.value,
     });
   },
-  showTimePicker(event) {
-    const { field } = event.currentTarget.dataset;
-    const value = String(this.data[field] || dayjs().format("YYYY-MM-DD HH:mm")).trim();
+  showTimePicker(field) {
+    const value = String(
+      this.data[field] || dayjs().format("YYYY-MM-DD HH:mm"),
+    ).trim();
     const titles = {
       startTime: "选择开始时间",
       endTime: "选择结束时间",
@@ -81,6 +82,12 @@ Page({
       timePickerVisible: true,
     });
   },
+  onStartTimeTap() {
+    this.showTimePicker("startTime");
+  },
+  onEndTimeTap() {
+    this.showTimePicker("endTime");
+  },
   hideTimePicker() {
     this.setData({
       activeTimeField: "",
@@ -88,7 +95,7 @@ Page({
     });
   },
   onTimePickerConfirm(event) {
-    const { value } = event.detail;
+    const value = event.detail?.value || this.data.timePickerValue;
     const { activeTimeField } = this.data;
 
     if (!activeTimeField) {
@@ -100,6 +107,15 @@ Page({
       timePickerValue: value,
       timePickerVisible: false,
       activeTimeField: "",
+    });
+  },
+  onTimePickerClose(event) {
+    const trigger = event.detail?.trigger;
+
+    this.setData({
+      timePickerVisible: false,
+      activeTimeField:
+        trigger === "confirm-btn" ? this.data.activeTimeField : "",
     });
   },
   onUseDetailRoute() {
@@ -232,7 +248,7 @@ Page({
       images: getUploadUrls(nextFiles),
     });
   },
-  onSave() {
+  async onSave() {
     const bannerImage = String(this.data.bannerImage || "").trim();
     const title = String(this.data.title || "").trim();
     const description = String(this.data.description || "").trim();
@@ -281,37 +297,36 @@ Page({
       return;
     }
 
-    const a = {
-      title,
-      description,
-      conclusion,
-      startTime,
-      endTime,
-      routeUrl,
-      bannerImage,
-      images: this.data.images,
-      isBanner: this.data.isBanner,
-    };
-    console.log("a", a);
-    return;
-
-    createActivity({
-      title,
-      description,
-      conclusion,
-      startTime,
-      endTime,
-      routeUrl,
-      bannerImage,
-      images: this.data.images,
-      isBanner: this.data.isBanner,
+    wx.showLoading({
+      title: "创建中...",
     });
 
-    wx.showToast({
-      title: "活动已创建",
-      icon: "success",
-    });
+    try {
+      await createActivity({
+        title,
+        description,
+        conclusion,
+        startTime,
+        endTime,
+        routeUrl,
+        bannerImage,
+        images: this.data.images,
+        isBanner: this.data.isBanner,
+      });
 
-    wx.navigateBack();
+      wx.showToast({
+        title: "活动已创建",
+        icon: "success",
+      });
+
+      wx.navigateBack();
+    } catch (error) {
+      wx.showToast({
+        title: error.message || "创建失败",
+        icon: "none",
+      });
+    } finally {
+      wx.hideLoading();
+    }
   },
 });

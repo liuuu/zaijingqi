@@ -1,5 +1,6 @@
 const {
   getActivities,
+  loadActivities,
   isAdminUnlocked,
 } = require("../../utils/activity-store");
 
@@ -20,7 +21,7 @@ Page({
         console.log("fetchUsers res", res);
       });
   },
-  onShow() {
+  async onShow() {
     if (!isAdminUnlocked()) {
       wx.showToast({
         title: "请先输入密码",
@@ -32,6 +33,7 @@ Page({
       return;
     }
 
+    await loadActivities();
     this.setData({
       activities: getActivities(),
     });

@@ -183,6 +183,7 @@ const insertActivity = async (event) => {
     const activity = event.data;
     await db.collection("activities").add({
       data: {
+        id: activity.id,
         title: activity.title,
         description: activity.description,
         startTime: activity.startTime,
@@ -192,8 +193,61 @@ const insertActivity = async (event) => {
         address: address,
         conclusion: activity.conclusion,
         status: activity.status,
+        routeUrl: activity.routeUrl,
+        bannerTitle: activity.bannerTitle,
+        isBanner: activity.isBanner,
       },
     });
+    return {
+      success: true,
+      data: event.data,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errMsg: e,
+    };
+  }
+};
+
+const selectActivities = async () => {
+  try {
+    return {
+      success: true,
+      data: (await db.collection("activities").get()).data,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errMsg: e,
+    };
+  }
+};
+
+const updateActivity = async (event) => {
+  try {
+    const activity = event.data;
+    await db
+      .collection("activities")
+      .where({
+        id: activity.id,
+      })
+      .update({
+        data: {
+          title: activity.title,
+          description: activity.description,
+          startTime: activity.startTime,
+          endTime: activity.endTime,
+          bannerUrl: activity.bannerUrl,
+          images: activity.images,
+          address: address,
+          conclusion: activity.conclusion,
+          status: activity.status,
+          routeUrl: activity.routeUrl,
+          bannerTitle: activity.bannerTitle,
+          isBanner: activity.isBanner,
+        },
+      });
     return {
       success: true,
       data: event.data,
@@ -224,5 +278,11 @@ exports.main = async (event, context) => {
       return await deleteRecord(event);
     case "fetchUsers":
       return await fetchUsers(event);
+    case "insertActivity":
+      return await insertActivity(event);
+    case "selectActivities":
+      return await selectActivities(event);
+    case "updateActivity":
+      return await updateActivity(event);
   }
 };

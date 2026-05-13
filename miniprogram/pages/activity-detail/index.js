@@ -1,4 +1,4 @@
-const { getActivityById } = require("../../utils/activity-store");
+const { getActivityById, loadActivities } = require("../../utils/activity-store");
 
 Page({
   data: {
@@ -8,7 +8,8 @@ Page({
   onLoad(options) {
     this.activityId = options.id || "";
   },
-  onShow() {
+  async onShow() {
+    await loadActivities();
     const activity = getActivityById(this.activityId);
 
     if (!activity) {

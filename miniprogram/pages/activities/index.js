@@ -1,6 +1,7 @@
 const {
   getActivities,
   getBannerActivities,
+  loadActivities,
 } = require("../../utils/activity-store");
 
 const TAB_BAR_PAGES = [
@@ -66,10 +67,12 @@ Page({
           : Math.min(this.data.currentBannerIndex, bannerActivities.length - 1),
     });
   },
-  onShow() {
+  async onShow() {
+    await loadActivities();
     this.syncActivities();
   },
-  onPullDownRefresh() {
+  async onPullDownRefresh() {
+    await loadActivities();
     this.syncActivities();
     wx.stopPullDownRefresh();
   },

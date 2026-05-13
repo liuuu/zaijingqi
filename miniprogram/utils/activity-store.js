@@ -1,7 +1,7 @@
-const ACTIVITIES_STORAGE_KEY = "activities-config";
 const ADMIN_AUTH_STORAGE_KEY = "activity-admin-unlocked";
 const ADMIN_PASSWORD = "admin";
 const DEFAULT_ACTIVITY_IMAGE = "/images/zaijingqi.JPG";
+let activityCache = [];
 
 function buildActivityDetailRoute(activityId) {
   return `/pages/activity-detail/index?id=${activityId}`;
@@ -61,6 +61,11 @@ function cloneActivities(list) {
   return list.map((activity, index) => normalizeActivity(activity, index));
 }
 
+function setActivityCache(list) {
+  activityCache = cloneActivities(list);
+  return getActivities();
+}
+
 function normalizeRouteUrl(routeUrl) {
   const trimmedRoute = String(routeUrl || "").trim();
   if (!trimmedRoute) {
@@ -115,23 +120,77 @@ function normalizeActivity(activity, index) {
   };
 }
 
-function getActivities() {
-  const storedActivities = wx.getStorageSync(ACTIVITIES_STORAGE_KEY);
+function getFallbackActivities() {
+  return cloneActivities(DEFAULT_ACTIVITIES);
+}
 
-  if (!Array.isArray(storedActivities) || storedActivities.length === 0) {
-    return cloneActivities(DEFAULT_ACTIVITIES);
+function getActivities() {
+  if (!Array.isArray(activityCache) || activityCache.length === 0) {
+    return getFallbackActivities();
   }
 
-  return cloneActivities(storedActivities);
+  return cloneActivities(activityCache);
 }
 
-function saveActivities(activities) {
-  const normalizedActivities = cloneActivities(activities);
-  wx.setStorageSync(ACTIVITIES_STORAGE_KEY, normalizedActivities);
-  return normalizedActivities;
+async function insertActivityToCloud(activity) {
+  if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {
+    throw new Error("云能力不可用，无法创建活动");
+  }
+
+  const result = await wx.cloud.callFunction({
+    name: "quickstartFunctions",
+    data: {
+      type: "insertActivity",
+      data: {
+        id: activity.id,
+        title: activity.title,
+        description: activity.description,
+        startTime: activity.startTime,
+        endTime: activity.endTime,
+        bannerUrl: activity.bannerImage,
+        images: activity.images,
+        conclusion: activity.conclusion,
+        status: activity.status || (activity.isBanner ? "banner" : "normal"),
+        routeUrl: activity.routeUrl,
+        bannerTitle: activity.bannerTitle,
+        isBanner: activity.isBanner,
+      },
+    },
+  });
+
+  if (!result || !result.result || result.result.success !== true) {
+    throw new Error((result && result.result && result.result.errMsg) || "创建活动失败");
+  }
+
+  return result.result;
 }
 
-function createActivity(activity) {
+async function selectActivitiesFromCloud() {
+  if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {
+    return getFallbackActivities();
+  }
+
+  const result = await wx.cloud.callFunction({
+    name: "quickstartFunctions",
+    data: {
+      type: "selectActivities",
+    },
+  });
+
+  if (!result || !result.result || result.result.success !== true) {
+    return getFallbackActivities();
+  }
+
+  const cloudActivities = Array.isArray(result.result.data)
+    ? result.result.data
+    : [];
+
+  return cloudActivities.length > 0
+    ? cloneActivities(cloudActivities)
+    : getFallbackActivities();
+}
+
+async function createActivity(activity) {
   const source = activity || {};
   const activityId = source.id || generateActivityId();
   const normalizedActivity = normalizeActivity(
@@ -145,12 +204,18 @@ function createActivity(activity) {
     },
     0
   );
+  await insertActivityToCloud(normalizedActivity);
   const nextActivities = [...getActivities(), normalizedActivity];
 
   return {
     activity: normalizedActivity,
-    activities: saveActivities(nextActivities),
+    activities: setActivityCache(nextActivities),
   };
+}
+
+async function loadActivities() {
+  const activities = await selectActivitiesFromCloud();
+  return setActivityCache(activities);
 }
 
 function getActivityById(activityId) {
@@ -162,12 +227,41 @@ function getBannerActivities() {
   return bannerActivities.length > 0 ? bannerActivities : getActivities();
 }
 
-function updateActivity(activityId, updates) {
-  const nextActivities = getActivities().map((activity) =>
-    activity.id === activityId ? { ...activity, ...updates } : activity,
+async function updateActivity(activityId, updates) {
+  const currentActivity = getActivityById(activityId);
+  const nextActivity = normalizeActivity(
+    {
+      ...(currentActivity || {}),
+      ...updates,
+      id: activityId,
+    },
+    0,
   );
 
-  return saveActivities(nextActivities);
+  if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {
+    throw new Error("云能力不可用，无法保存活动");
+  }
+
+  const result = await wx.cloud.callFunction({
+    name: "quickstartFunctions",
+    data: {
+      type: "updateActivity",
+      data: {
+        ...nextActivity,
+        bannerUrl: nextActivity.bannerImage,
+      },
+    },
+  });
+
+  if (!result || !result.result || result.result.success !== true) {
+    throw new Error((result && result.result && result.result.errMsg) || "保存活动失败");
+  }
+
+  return setActivityCache(
+    getActivities().map((activity) =>
+      activity.id === activityId ? nextActivity : activity,
+    ),
+  );
 }
 
 function isAdminUnlocked() {
@@ -190,9 +284,9 @@ module.exports = {
   ADMIN_PASSWORD,
   buildActivityDetailRoute,
   createActivity,
+  loadActivities,
   getActivities,
   getBannerActivities,
-  saveActivities,
   getActivityById,
   updateActivity,
   normalizeImageList,
