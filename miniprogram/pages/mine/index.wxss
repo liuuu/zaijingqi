@@ -25,3 +25,47 @@ page {
   line-height: 1.6;
   color: #666666;
 }
+
+.password-hint {
+  margin-top: 24rpx;
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.password-input {
+  margin-top: 24rpx;
+}
+
+.primary-button,
+.secondary-button,
+.ghost-button {
+  margin-top: 24rpx;
+}
+
+.status-card {
+  margin-top: 32rpx;
+  padding-top: 32rpx;
+  border-top: 1rpx solid #ebedf0;
+}
+
+.status-card__title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #111111;
+}
+
+.status-card__description {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  line-height: 1.6;
+  color: #666666;
+}
+
+.status-card__actions {
+  display: flex;
+  flex-direction: column;
+}
+
+.status-card__actions button + button {
+  margin-top: 16rpx;
+}

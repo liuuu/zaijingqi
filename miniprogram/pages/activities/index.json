@@ -1,9 +1,12 @@
 {
-  "navigationBarTitleText": "Activities",
+  "navigationBarTitleText": "活动",
   "onReachBottomDistance": 10,
   "backgroundTextStyle": "light",
   "enablePullDownRefresh": true,
   "usingComponents": {
-    "t-swiper": "tdesign-miniprogram/swiper/swiper"
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-cell": "tdesign-miniprogram/cell/cell",
+    "t-swiper": "tdesign-miniprogram/swiper/swiper",
+    "t-tag": "tdesign-miniprogram/tag/tag"
   }
 }

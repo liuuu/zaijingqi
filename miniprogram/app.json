@@ -1,8 +1,12 @@
 {
   "pages": [
     "pages/activities/index",
+    "pages/activity-detail/index",
+    "pages/activity-create/index",
     "pages/index/index",
     "pages/mine/index",
+    "pages/activity-admin/index",
+    "pages/activity-edit/index",
     "pages/example/index"
   ],
   "tabBar": {
@@ -13,7 +17,7 @@
     "list": [
       {
         "pagePath": "pages/activities/index",
-        "text": "Activities",
+        "text": "活动",
         "iconPath": "images/icons/examples.png",
         "selectedIconPath": "images/icons/examples-active.png"
       },
@@ -25,7 +29,7 @@
       },
       {
         "pagePath": "pages/mine/index",
-        "text": "Mine",
+        "text": "我的",
         "iconPath": "images/icons/usercenter.png",
         "selectedIconPath": "images/icons/usercenter-active.png"
       }

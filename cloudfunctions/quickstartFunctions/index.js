@@ -164,6 +164,47 @@ const deleteRecord = async (event) => {
 // const updateRecord = require('./updateRecord/index');
 // const fetchGoodsList = require('./fetchGoodsList/index');
 // const genMpQrcode = require('./genMpQrcode/index');
+
+const fetchUsers = async () => {
+  try {
+    return await db.collection("users").get();
+  } catch (e) {
+    return {
+      success: false,
+      errMsg: e,
+    };
+  }
+};
+
+const address = "在惊奇AI探索空间";
+
+const insertActivity = async (event) => {
+  try {
+    const activity = event.data;
+    await db.collection("activities").add({
+      data: {
+        title: activity.title,
+        description: activity.description,
+        startTime: activity.startTime,
+        endTime: activity.endTime,
+        bannerUrl: activity.bannerUrl,
+        images: activity.images,
+        address: address,
+        conclusion: activity.conclusion,
+        status: activity.status,
+      },
+    });
+    return {
+      success: true,
+      data: event.data,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errMsg: e,
+    };
+  }
+};
 // 云函数入口函数
 exports.main = async (event, context) => {
   switch (event.type) {
@@ -181,5 +222,7 @@ exports.main = async (event, context) => {
       return await insertRecord(event);
     case "deleteRecord":
       return await deleteRecord(event);
+    case "fetchUsers":
+      return await fetchUsers(event);
   }
 };

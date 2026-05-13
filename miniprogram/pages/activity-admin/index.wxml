@@ -1,0 +1,35 @@
+<view class="page">
+  <view class="hero-card">
+    <view class="title">活动管理</view>
+    <view class="description">
+      管理活动页中的轮播活动和详情页内容。
+    </view>
+    <view class="hero-card__actions">
+      <t-button theme="primary" size="large" block bind:tap="onCreateActivity">新建活动</t-button>
+    </view>
+  </view>
+
+  <view
+    wx:for="{{activities}}"
+    wx:key="id"
+    class="activity-card"
+  >
+    <t-cell
+      title="{{item.bannerTitle}}"
+      description="{{item.description}}"
+      note="{{item.startTime}}"
+      image="{{item.images[0]}}"
+    />
+    <view class="activity-card__meta">
+      <t-tag wx:if="{{item.isBanner}}" theme="primary" variant="light">轮播</t-tag>
+      <t-tag wx:if="{{item.endTime}}" theme="success" variant="light">{{item.endTime}}</t-tag>
+    </view>
+    <view class="activity-card__route">{{item.routeUrl}}</view>
+    <view class="activity-card__actions">
+      <t-button variant="outline" theme="default" data-id="{{item.id}}" bind:tap="onPreviewActivity">
+        预览
+      </t-button>
+      <t-button theme="primary" data-id="{{item.id}}" bind:tap="onEditActivity">编辑</t-button>
+    </view>
+  </view>
+</view>

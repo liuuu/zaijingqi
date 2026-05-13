@@ -1,0 +1,97 @@
+<view class="page">
+  <view class="card">
+    <view class="title">编辑活动</view>
+    <view class="description">修改轮播内容、详情内容、图片和活动路由。</view>
+
+    <view class="switch-row">
+      <view>
+        <view class="field-label field-label--compact">显示为轮播</view>
+        <view class="field-help">轮播活动会显示在顶部轮播图中。</view>
+      </view>
+      <t-switch value="{{isBanner}}" bind:change="onBannerChange" />
+    </view>
+
+    <t-divider content="轮播内容" />
+
+    <t-input
+      label="轮播标题"
+      value="{{bannerTitle}}"
+      placeholder="轮播标题"
+      data-field="bannerTitle"
+      bind:change="onFieldInput"
+    />
+
+    <t-input
+      label="标题"
+      value="{{title}}"
+      placeholder="活动标题"
+      data-field="title"
+      bind:change="onFieldInput"
+    />
+
+    <t-textarea
+      label="描述"
+      value="{{description}}"
+      placeholder="活动描述"
+      data-field="description"
+      bind:change="onFieldInput"
+      autosize="{{true}}"
+      maxlength="-1"
+    />
+
+    <t-textarea
+      label="结论"
+      value="{{conclusion}}"
+      placeholder="活动结论"
+      data-field="conclusion"
+      bind:change="onFieldInput"
+      autosize="{{true}}"
+      maxlength="-1"
+    />
+
+    <t-divider content="时间安排" />
+
+    <t-input
+      label="开始时间"
+      value="{{startTime}}"
+      placeholder="2026-05-20 09:00"
+      data-field="startTime"
+      bind:change="onFieldInput"
+    />
+
+    <t-input
+      label="结束时间"
+      value="{{endTime}}"
+      placeholder="2026-05-20 12:00"
+      data-field="endTime"
+      bind:change="onFieldInput"
+    />
+
+    <t-divider content="图片和路由" />
+
+    <t-textarea
+      label="图片"
+      value="{{imagesText}}"
+      placeholder="每行填写一张图片地址或本地路径"
+      data-field="imagesText"
+      bind:change="onFieldInput"
+      autosize="{{true}}"
+      maxlength="-1"
+    />
+
+    <t-input
+      label="路由地址"
+      value="{{routeUrl}}"
+      placeholder="/pages/activity-detail/index?id=activity-example"
+      data-field="routeUrl"
+      bind:change="onFieldInput"
+    />
+
+    <view class="action-row">
+      <t-button variant="outline" theme="default" bind:tap="onUseDetailRoute">
+        使用详情页路由
+      </t-button>
+      <t-button theme="primary" bind:tap="onSave">保存活动</t-button>
+    </view>
+  </view>
+</view>

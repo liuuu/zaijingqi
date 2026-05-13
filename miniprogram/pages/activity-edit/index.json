@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "编辑活动",
+  "usingComponents": {
+    "t-button": "tdesign-miniprogram/button/button",
+    "t-divider": "tdesign-miniprogram/divider/divider",
+    "t-input": "tdesign-miniprogram/input/input",
+    "t-switch": "tdesign-miniprogram/switch/switch",
+    "t-textarea": "tdesign-miniprogram/textarea/textarea"
+  }
+}

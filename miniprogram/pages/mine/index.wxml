@@ -2,5 +2,34 @@
   <view class="card">
     <view class="title">{{title}}</view>
     <view class="description">{{description}}</view>
+    <view class="password-hint">{{passwordHint}}</view>
+
+    <t-input
+      class="password-input"
+      label="密码"
+      type="password"
+      value="{{password}}"
+      placeholder="请输入密码"
+      bind:change="onPasswordInput"
+    />
+
+    <t-button class="primary-button" theme="primary" size="large" block bind:tap="onSubmitPassword">
+      进入管理
+    </t-button>
+
+    <view wx:if="{{isUnlocked}}" class="status-card">
+      <view class="status-card__title">已授权访问</view>
+      <view class="status-card__description">
+        现在可以查看活动并编辑每个活动的路由地址。
+      </view>
+      <view class="status-card__actions">
+        <t-button class="secondary-button" theme="primary" variant="outline" size="large" block bind:tap="onOpenManager">
+          打开活动管理
+        </t-button>
+        <t-button class="ghost-button" theme="default" variant="outline" size="large" block bind:tap="onLockManager">
+          锁定
+        </t-button>
+      </view>
+    </view>
   </view>
 </view>
