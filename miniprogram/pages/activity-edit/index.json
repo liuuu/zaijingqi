@@ -3,6 +3,8 @@
   "usingComponents": {
     "t-button": "tdesign-miniprogram/button/button",
     "t-divider": "tdesign-miniprogram/divider/divider",
+    "t-cell": "tdesign-miniprogram/cell/cell",
+    "t-date-time-picker": "tdesign-miniprogram/date-time-picker/date-time-picker",
     "t-input": "tdesign-miniprogram/input/input",
     "t-switch": "tdesign-miniprogram/switch/switch",
     "t-textarea": "tdesign-miniprogram/textarea/textarea",

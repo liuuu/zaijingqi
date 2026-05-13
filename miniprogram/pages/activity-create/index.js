@@ -2,6 +2,7 @@ const {
   createActivity,
   isAdminUnlocked,
 } = require("../../utils/activity-store");
+const dayjs = require("dayjs");
 const {
   getUploadUrls,
   uploadImageFile,
@@ -9,12 +10,18 @@ const {
 
 Page({
   data: {
-    bannerTitle: "",
+    routeUrl: "",
+    bannerImage: "",
+    bannerUploadFiles: [],
     title: "",
     description: "",
     conclusion: "",
     startTime: "",
     endTime: "",
+    timePickerTitle: "选择时间",
+    timePickerValue: "",
+    timePickerVisible: false,
+    activeTimeField: "",
     images: [],
     uploadFiles: [],
     isBanner: true,
@@ -26,6 +33,11 @@ Page({
     },
     uploadConfig: {
       count: 9,
+      sourceType: ["album", "camera"],
+      sizeType: ["compressed"],
+    },
+    bannerUploadConfig: {
+      count: 1,
       sourceType: ["album", "camera"],
       sizeType: ["compressed"],
     },
@@ -54,8 +66,101 @@ Page({
       isBanner: event.detail.value,
     });
   },
+  showTimePicker(event) {
+    const { field } = event.currentTarget.dataset;
+    const value = String(this.data[field] || dayjs().format("YYYY-MM-DD HH:mm")).trim();
+    const titles = {
+      startTime: "选择开始时间",
+      endTime: "选择结束时间",
+    };
+
+    this.setData({
+      activeTimeField: field,
+      timePickerTitle: titles[field] || "选择时间",
+      timePickerValue: value,
+      timePickerVisible: true,
+    });
+  },
+  hideTimePicker() {
+    this.setData({
+      activeTimeField: "",
+      timePickerVisible: false,
+    });
+  },
+  onTimePickerConfirm(event) {
+    const { value } = event.detail;
+    const { activeTimeField } = this.data;
+
+    if (!activeTimeField) {
+      return;
+    }
+
+    this.setData({
+      [activeTimeField]: value,
+      timePickerValue: value,
+      timePickerVisible: false,
+      activeTimeField: "",
+    });
+  },
   onUseDetailRoute() {
-    this.setData({});
+    this.setData({
+      routeUrl: "",
+    });
+  },
+  onBannerUploadSuccess(event) {
+    const uploadedFiles = event.detail.files || [];
+
+    this.setData({
+      bannerUploadFiles: uploadedFiles,
+      bannerImage: getUploadUrls(uploadedFiles)[0] || "",
+    });
+  },
+  async onBannerUploadAdd(event) {
+    const selectedFiles = event.detail.files || [];
+
+    if (!selectedFiles.length) {
+      return;
+    }
+
+    const previousFiles = [...this.data.bannerUploadFiles];
+    this.setData({ isUploading: true });
+    wx.showLoading({ title: "上传中..." });
+
+    try {
+      const file = selectedFiles[0];
+      const result = await uploadImageFile(file.url);
+      const nextFiles = [
+        {
+          ...file,
+          url: result.fileID,
+          status: "done",
+          percent: 100,
+        },
+      ];
+
+      this.setData({
+        bannerUploadFiles: nextFiles,
+        bannerImage: getUploadUrls(nextFiles)[0] || "",
+      });
+    } catch (error) {
+      this.setData({
+        bannerUploadFiles: previousFiles,
+        bannerImage: getUploadUrls(previousFiles)[0] || "",
+      });
+      wx.showToast({
+        title: "图片上传失败",
+        icon: "none",
+      });
+    } finally {
+      this.setData({ isUploading: false });
+      wx.hideLoading();
+    }
+  },
+  onBannerUploadRemove() {
+    this.setData({
+      bannerUploadFiles: [],
+      bannerImage: "",
+    });
   },
   onUploadSuccess(event) {
     const uploadedFiles = event.detail.files || [];
@@ -128,16 +233,17 @@ Page({
     });
   },
   onSave() {
-    const bannerTitle = String(this.data.bannerTitle || "").trim();
+    const bannerImage = String(this.data.bannerImage || "").trim();
     const title = String(this.data.title || "").trim();
     const description = String(this.data.description || "").trim();
     const conclusion = String(this.data.conclusion || "").trim();
     const startTime = String(this.data.startTime || "").trim();
     const endTime = String(this.data.endTime || "").trim();
+    const routeUrl = String(this.data.routeUrl || "").trim();
 
-    if (!bannerTitle) {
+    if (!bannerImage) {
       wx.showToast({
-        title: "请填写轮播标题",
+        title: "请添加封面图片",
         icon: "none",
       });
       return;
@@ -151,21 +257,52 @@ Page({
       return;
     }
 
-    if (this.data.images.length === 0) {
+    if (!description) {
       wx.showToast({
-        title: "请至少添加一张图片",
+        title: "请填写活动介绍",
         icon: "none",
       });
       return;
     }
 
-    createActivity({
-      bannerTitle,
+    if (!startTime) {
+      wx.showToast({
+        title: "请填写开始时间",
+        icon: "none",
+      });
+      return;
+    }
+
+    if (!endTime) {
+      wx.showToast({
+        title: "请填写结束时间",
+        icon: "none",
+      });
+      return;
+    }
+
+    const a = {
       title,
       description,
       conclusion,
       startTime,
       endTime,
+      routeUrl,
+      bannerImage,
+      images: this.data.images,
+      isBanner: this.data.isBanner,
+    };
+    console.log("a", a);
+    return;
+
+    createActivity({
+      title,
+      description,
+      conclusion,
+      startTime,
+      endTime,
+      routeUrl,
+      bannerImage,
       images: this.data.images,
       isBanner: this.data.isBanner,
     });

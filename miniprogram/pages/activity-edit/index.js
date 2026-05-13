@@ -4,6 +4,7 @@ const {
   isAdminUnlocked,
   updateActivity,
 } = require("../../utils/activity-store");
+const dayjs = require("dayjs");
 const {
   buildUploadFiles,
   getUploadUrls,
@@ -13,12 +14,18 @@ const {
 Page({
   data: {
     activityId: "",
+    bannerImage: "",
+    bannerUploadFiles: [],
     bannerTitle: "",
     title: "",
     description: "",
     conclusion: "",
     startTime: "",
     endTime: "",
+    timePickerTitle: "选择时间",
+    timePickerValue: "",
+    timePickerVisible: false,
+    activeTimeField: "",
     routeUrl: "",
     images: [],
     uploadFiles: [],
@@ -31,6 +38,11 @@ Page({
     },
     uploadConfig: {
       count: 9,
+      sourceType: ["album", "camera"],
+      sizeType: ["compressed"],
+    },
+    bannerUploadConfig: {
+      count: 1,
       sourceType: ["album", "camera"],
       sizeType: ["compressed"],
     },
@@ -63,6 +75,8 @@ Page({
 
     this.setData({
       activityId: activity.id,
+      bannerImage: activity.bannerImage,
+      bannerUploadFiles: buildUploadFiles([activity.bannerImage]),
       bannerTitle: activity.bannerTitle,
       title: activity.title,
       description: activity.description,
@@ -85,6 +99,97 @@ Page({
   onBannerChange(event) {
     this.setData({
       isBanner: event.detail.value,
+    });
+  },
+  showTimePicker(event) {
+    const { field } = event.currentTarget.dataset;
+    const value = String(this.data[field] || dayjs().format("YYYY-MM-DD HH:mm")).trim();
+    const titles = {
+      startTime: "选择开始时间",
+      endTime: "选择结束时间",
+    };
+
+    this.setData({
+      activeTimeField: field,
+      timePickerTitle: titles[field] || "选择时间",
+      timePickerValue: value,
+      timePickerVisible: true,
+    });
+  },
+  hideTimePicker() {
+    this.setData({
+      activeTimeField: "",
+      timePickerVisible: false,
+    });
+  },
+  onTimePickerConfirm(event) {
+    const { value } = event.detail;
+    const { activeTimeField } = this.data;
+
+    if (!activeTimeField) {
+      return;
+    }
+
+    this.setData({
+      [activeTimeField]: value,
+      timePickerValue: value,
+      timePickerVisible: false,
+      activeTimeField: "",
+    });
+  },
+  onBannerUploadSuccess(event) {
+    const uploadedFiles = event.detail.files || [];
+
+    this.setData({
+      bannerUploadFiles: uploadedFiles,
+      bannerImage: getUploadUrls(uploadedFiles)[0] || "",
+    });
+  },
+  async onBannerUploadAdd(event) {
+    const selectedFiles = event.detail.files || [];
+
+    if (!selectedFiles.length) {
+      return;
+    }
+
+    const previousFiles = [...this.data.bannerUploadFiles];
+    this.setData({ isUploading: true });
+    wx.showLoading({ title: "上传中..." });
+
+    try {
+      const file = selectedFiles[0];
+      const result = await uploadImageFile(file.url);
+      const nextFiles = [
+        {
+          ...file,
+          url: result.fileID,
+          status: "done",
+          percent: 100,
+        },
+      ];
+
+      this.setData({
+        bannerUploadFiles: nextFiles,
+        bannerImage: getUploadUrls(nextFiles)[0] || "",
+      });
+    } catch (error) {
+      this.setData({
+        bannerUploadFiles: previousFiles,
+        bannerImage: getUploadUrls(previousFiles)[0] || "",
+      });
+      wx.showToast({
+        title: "图片上传失败",
+        icon: "none",
+      });
+    } finally {
+      this.setData({ isUploading: false });
+      wx.hideLoading();
+    }
+  },
+  onBannerUploadRemove() {
+    this.setData({
+      bannerUploadFiles: [],
+      bannerImage: "",
     });
   },
   onUseDetailRoute() {
@@ -161,6 +266,7 @@ Page({
     });
   },
   onSave() {
+    const bannerImage = String(this.data.bannerImage || "").trim();
     const bannerTitle = String(this.data.bannerTitle || "").trim();
     const title = String(this.data.title || "").trim();
     const description = String(this.data.description || "").trim();
@@ -168,6 +274,14 @@ Page({
     const startTime = String(this.data.startTime || "").trim();
     const endTime = String(this.data.endTime || "").trim();
     const routeUrl = String(this.data.routeUrl || "").trim();
+
+    if (!bannerImage) {
+      wx.showToast({
+        title: "请添加封面图片",
+        icon: "none",
+      });
+      return;
+    }
 
     if (!bannerTitle) {
       wx.showToast({
@@ -209,6 +323,7 @@ Page({
       startTime,
       endTime,
       routeUrl,
+      bannerImage,
       images: this.data.images,
       isBanner: this.data.isBanner,
     });

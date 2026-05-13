@@ -3,10 +3,7 @@ const { getActivityById } = require("../../utils/activity-store");
 Page({
   data: {
     activity: null,
-    swiperList: [],
-    imageProps: {
-      mode: "aspectFill",
-    },
+    galleryImages: [],
   },
   onLoad(options) {
     this.activityId = options.id || "";
@@ -27,7 +24,7 @@ Page({
 
     this.setData({
       activity,
-      swiperList: activity.images.map((image) => ({
+      galleryImages: activity.images.map((image) => ({
         value: image,
         ariaLabel: activity.title,
       })),

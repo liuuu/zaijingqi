@@ -22,6 +22,7 @@ const DEFAULT_ACTIVITIES = [
     startTime: "2026-05-20 09:00",
     endTime: "2026-05-20 12:00",
     isBanner: true,
+    bannerImage: "/images/zaijingqi.JPG",
     images: ["/images/zaijingqi.JPG", "/images/zaijingqi1.JPG"],
     routeUrl: buildActivityDetailRoute("activity-example"),
   },
@@ -36,6 +37,7 @@ const DEFAULT_ACTIVITIES = [
     startTime: "2026-05-23 14:00",
     endTime: "2026-05-23 16:30",
     isBanner: true,
+    bannerImage: "/images/zaijingqi1.JPG",
     images: ["/images/zaijingqi1.JPG", "/images/zaijingqi.JPG"],
     routeUrl: buildActivityDetailRoute("activity-cloud"),
   },
@@ -49,6 +51,7 @@ const DEFAULT_ACTIVITIES = [
     startTime: "2026-05-25 19:00",
     endTime: "2026-05-25 20:00",
     isBanner: false,
+    bannerImage: "/images/zaijingqi.JPG",
     images: ["/images/zaijingqi.JPG"],
     routeUrl: buildActivityDetailRoute("activity-mine"),
   },
@@ -91,6 +94,8 @@ function normalizeActivity(activity, index) {
   const activityId = source.id || `activity-${index + 1}`;
   const images = normalizeImageList(source.images);
   const defaultRouteUrl = buildActivityDetailRoute(activityId);
+  const bannerImage =
+    String(source.bannerImage || "").trim() || images[0] || DEFAULT_ACTIVITY_IMAGE;
 
   return {
     id: activityId,
@@ -104,6 +109,7 @@ function normalizeActivity(activity, index) {
     startTime: String(source.startTime || "").trim(),
     endTime: String(source.endTime || "").trim(),
     isBanner: source.isBanner !== false,
+    bannerImage,
     images: images.length > 0 ? images : [DEFAULT_ACTIVITY_IMAGE],
     routeUrl: normalizeRouteUrl(source.routeUrl) || defaultRouteUrl,
   };
@@ -132,6 +138,9 @@ function createActivity(activity) {
     {
       ...source,
       id: activityId,
+      bannerImage:
+        source.bannerImage ||
+        (Array.isArray(source.images) ? source.images[0] : ""),
       routeUrl: source.routeUrl || buildActivityDetailRoute(activityId),
     },
     0

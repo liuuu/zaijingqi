@@ -14,13 +14,18 @@
     wx:key="id"
     class="activity-card"
   >
+    <t-image
+      class="activity-card__cover"
+      src="{{item.bannerImage}}"
+      mode="aspectFill"
+    />
     <t-cell
       title="{{item.bannerTitle}}"
       description="{{item.description}}"
       note="{{item.startTime}}"
-      image="{{item.images[0]}}"
     />
     <view class="activity-card__meta">
+      <t-tag theme="warning" variant="light">封面</t-tag>
       <t-tag wx:if="{{item.isBanner}}" theme="primary" variant="light">轮播</t-tag>
       <t-tag wx:if="{{item.endTime}}" theme="success" variant="light">{{item.endTime}}</t-tag>
     </view>

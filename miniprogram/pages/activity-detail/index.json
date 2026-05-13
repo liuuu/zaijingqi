@@ -4,7 +4,6 @@
     "t-cell": "tdesign-miniprogram/cell/cell",
     "t-divider": "tdesign-miniprogram/divider/divider",
     "t-image": "tdesign-miniprogram/image/image",
-    "t-swiper": "tdesign-miniprogram/swiper/swiper",
     "t-tag": "tdesign-miniprogram/tag/tag"
   }
 }

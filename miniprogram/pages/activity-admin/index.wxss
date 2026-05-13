@@ -27,6 +27,14 @@ page {
   overflow: hidden;
 }
 
+.activity-card__cover {
+  display: block;
+  width: 100%;
+  height: 280rpx;
+  border-radius: 20rpx;
+  margin-bottom: 20rpx;
+}
+
 .title,
 .activity-card__title {
   font-size: 36rpx;

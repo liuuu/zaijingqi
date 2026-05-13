@@ -1,7 +1,27 @@
 <view class="page">
   <view class="card">
     <view class="title">新建活动</view>
-    <view class="description">填写活动基础信息，保存后会自动生成详情页路由。</view>
+
+    <t-divider content="封面" />
+
+    <view class="image-picker">
+      <view class="image-picker__header">
+        <view>
+          <view class="field-label field-label--compact">封面图片</view>
+        </view>
+      </view>
+      <t-upload
+        files="{{bannerUploadFiles}}"
+        max="{{1}}"
+        mediaType="{{['image']}}"
+        source="media"
+        config="{{bannerUploadConfig}}"
+        gridConfig="{{gridConfig}}"
+        bind:add="onBannerUploadAdd"
+        bind:success="onBannerUploadSuccess"
+        bind:remove="onBannerUploadRemove"
+      />
+    </view>
 
     <view class="switch-row">
       <view>
@@ -11,15 +31,7 @@
       <t-switch value="{{isBanner}}" bind:change="onBannerChange" />
     </view>
 
-    <t-divider content="轮播内容" />
-
-    <t-input
-      label="轮播标题"
-      value="{{bannerTitle}}"
-      placeholder="轮播标题"
-      data-field="bannerTitle"
-      bind:change="onFieldInput"
-    />
+    <t-divider content="活动内容" />
 
     <t-input
       label="标题"
@@ -39,41 +51,35 @@
       maxlength="-1"
     />
 
-    <t-textarea
-      label="结论"
-      value="{{conclusion}}"
-      placeholder="活动结论"
-      data-field="conclusion"
-      bind:change="onFieldInput"
-      autosize="{{true}}"
-      maxlength="-1"
-    />
+
 
     <t-divider content="时间安排" />
 
-    <t-input
-      label="开始时间"
-      value="{{startTime}}"
-      placeholder="2026-05-20 09:00"
+    <t-cell
+      title="开始时间"
+      note="{{startTime || '请选择开始时间'}}"
+      arrow="{{true}}"
+      hover="{{true}}"
       data-field="startTime"
-      bind:change="onFieldInput"
+      bind:click="showTimePicker"
     />
 
-    <t-input
-      label="结束时间"
-      value="{{endTime}}"
-      placeholder="2026-05-20 12:00"
+    <t-cell
+      title="结束时间"
+      note="{{endTime || '请选择结束时间'}}"
+      arrow="{{true}}"
+      hover="{{true}}"
       data-field="endTime"
-      bind:change="onFieldInput"
+      bind:click="showTimePicker"
     />
 
-    <t-divider content="图片" />
+    <t-divider content="活动总结/图片" />
 
     <view class="image-picker">
       <view class="image-picker__header">
         <view>
-          <view class="field-label field-label--compact">图片</view>
-          <view class="field-help">图片会上传到微信云存储，并保存云文件地址。</view>
+          <view class="field-label field-label--compact">活动图片</view>
+          <view class="field-help">补充活动展示图，会上传到微信云存储并保存云文件地址。</view>
         </view>
       </view>
       <t-upload
@@ -88,20 +94,32 @@
         bind:remove="onUploadRemove"
       />
     </view>
+    <view>
+          <t-textarea
+          label="结论"
+          value="{{conclusion}}"
+          placeholder="活动结论"
+          data-field="conclusion"
+          bind:change="onFieldInput"
+          autosize="{{true}}"
+          maxlength="-1"
+        />
+    </view>
 
-    <t-input
-      label="路由地址"
-      value="{{routeUrl}}"
-      placeholder="留空则自动生成详情页路由"
-      data-field="routeUrl"
-      bind:change="onFieldInput"
-    />
 
     <view class="action-row">
-      <t-button variant="outline" theme="default" bind:tap="onUseDetailRoute">
-        恢复默认路由
-      </t-button>
       <t-button theme="primary" bind:tap="onSave">创建活动</t-button>
     </view>
+
+    <t-date-time-picker
+      title="{{timePickerTitle}}"
+      visible="{{timePickerVisible}}"
+      value="{{timePickerValue}}"
+      mode="minute"
+      format="YYYY-MM-DD HH:mm"
+      bind:change="onTimePickerConfirm"
+      bind:cancel="hideTimePicker"
+      bind:close="hideTimePicker"
+    />
   </view>
 </view>

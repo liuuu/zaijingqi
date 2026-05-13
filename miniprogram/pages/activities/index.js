@@ -52,7 +52,7 @@ Page({
     const activities = getActivities();
     const bannerActivities = getBannerActivities();
     const swiperList = bannerActivities.map((activity) => ({
-      value: activity.images[0],
+      value: activity.bannerImage,
       ariaLabel: activity.bannerTitle || activity.title,
     }));
 

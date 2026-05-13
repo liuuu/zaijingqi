@@ -39,7 +39,7 @@
       title="{{item.title}}"
       description="{{item.description}}"
       note="{{item.startTime}}"
-      image="{{item.images[0]}}"
+      image="{{item.bannerImage}}"
       arrow="{{true}}"
       data-route-url="{{item.routeUrl}}"
       bind:click="onOpenActivity"
