@@ -7,10 +7,9 @@
     </view>
   </view>
   <view wx:for="{{activities}}" wx:key="id" class="activity-card">
-    <t-image class="activity-card__cover" src="{{item.bannerImage}}" mode="aspectFill" />
+    <t-image class="activity-card__cover" src="{{item.bannerUrl}}" mode="aspectFill" />
     <t-cell description="{{item.description}}" note="{{item.startTime}}" />
     <view class="activity-card__meta">
-      <t-tag theme="warning" variant="light">封面</t-tag>
       <t-tag wx:if="{{item.isBanner}}" theme="primary" variant="light">轮播</t-tag>
       <t-tag wx:if="{{item.endTime}}" theme="success" variant="light">{{item.endTime}}</t-tag>
     </view>

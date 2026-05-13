@@ -2,7 +2,7 @@ const dayjs = require("dayjs");
 const {
   createActivity,
   getActivityById,
-  loadActivities,
+  loadActivity,
   isAdminUnlocked,
   updateActivity,
 } = require("./activity-store");
@@ -37,9 +37,9 @@ function buildEmptyState(activityId = "") {
     activityId,
     pageTitle: "新建活动",
     headingTitle: "新建活动",
-    pageDescription: "填写活动封面、内容、图片和路由，创建后会保存到云端。",
+    pageDescription: "填写活动封面、内容和图片，创建后会保存到云端。",
     submitText: "创建活动",
-    bannerImage: "",
+    bannerUrl: "",
     bannerUploadFiles: [],
     title: "",
     description: "",
@@ -108,8 +108,7 @@ function createActivityFormPage() {
         return;
       }
 
-      await loadActivities();
-      const activity = getActivityById(this.activityId);
+      const activity = await loadActivity(this.activityId);
 
       if (!activity) {
         wx.showToast({
@@ -123,8 +122,8 @@ function createActivityFormPage() {
       this.hasLoadedActivity = true;
       this.setData({
         activityId: activity.id,
-        bannerImage: activity.bannerImage,
-        bannerUploadFiles: buildUploadFiles([activity.bannerImage]),
+        bannerUrl: activity.bannerUrl,
+        bannerUploadFiles: buildUploadFiles([activity.bannerUrl]),
         title: activity.title,
         description: activity.description,
         conclusion: activity.conclusion,
@@ -204,7 +203,7 @@ function createActivityFormPage() {
 
       this.setData({
         bannerUploadFiles: uploadedFiles,
-        bannerImage: getUploadUrls(uploadedFiles)[0] || "",
+        bannerUrl: getUploadUrls(uploadedFiles)[0] || "",
       });
     },
     async onBannerUploadAdd(event) {
@@ -232,12 +231,12 @@ function createActivityFormPage() {
 
         this.setData({
           bannerUploadFiles: nextFiles,
-          bannerImage: getUploadUrls(nextFiles)[0] || "",
+          bannerUrl: getUploadUrls(nextFiles)[0] || "",
         });
       } catch (error) {
         this.setData({
           bannerUploadFiles: previousFiles,
-          bannerImage: getUploadUrls(previousFiles)[0] || "",
+          bannerUrl: getUploadUrls(previousFiles)[0] || "",
         });
         wx.showToast({
           title: "图片上传失败",
@@ -251,7 +250,7 @@ function createActivityFormPage() {
     onBannerUploadRemove() {
       this.setData({
         bannerUploadFiles: [],
-        bannerImage: "",
+        bannerUrl: "",
       });
     },
     onUploadSuccess(event) {
@@ -325,14 +324,14 @@ function createActivityFormPage() {
       });
     },
     async onSave() {
-      const bannerImage = String(this.data.bannerImage || "").trim();
+      const bannerUrl = String(this.data.bannerUrl || "").trim();
       const title = String(this.data.title || "").trim();
       const description = String(this.data.description || "").trim();
       const conclusion = String(this.data.conclusion || "").trim();
       const startTime = String(this.data.startTime || "").trim();
       const endTime = String(this.data.endTime || "").trim();
 
-      if (!bannerImage) {
+      if (!bannerUrl) {
         wx.showToast({
           title: "请添加封面图片",
           icon: "none",
@@ -384,7 +383,7 @@ function createActivityFormPage() {
           conclusion,
           startTime,
           endTime,
-          bannerImage,
+          bannerUrl,
           images: this.data.images,
           isBanner: this.data.isBanner,
         };

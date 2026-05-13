@@ -87,7 +87,14 @@ page {
 }
 
 .detail-image {
+  display: block;
+  width: 100%;
   height: 220rpx;
   border-radius: 20rpx;
   overflow: hidden;
+}
+
+.empty-text {
+  font-size: 26rpx;
+  color: #999999;
 }

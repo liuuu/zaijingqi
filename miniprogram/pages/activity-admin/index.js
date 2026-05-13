@@ -1,5 +1,4 @@
 const {
-  getActivities,
   loadActivities,
   isAdminUnlocked,
 } = require("../../utils/activity-store");
@@ -33,9 +32,10 @@ Page({
       return;
     }
 
-    await loadActivities();
+    const data = await loadActivities();
+    console.log("data", data);
     this.setData({
-      activities: getActivities(),
+      activities: data,
     });
   },
   onCreateActivity() {
@@ -45,6 +45,7 @@ Page({
   },
   onEditActivity(event) {
     const { id } = event.currentTarget.dataset;
+    console.log("id", id);
 
     wx.navigateTo({
       url: `/pages/activity-create/index?id=${id}`,

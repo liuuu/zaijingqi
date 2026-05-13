@@ -1,3 +1,8 @@
+const {
+  normalizeImageUrl,
+  normalizeImageUrls,
+} = require("./activity-image");
+
 const ADMIN_AUTH_STORAGE_KEY = "activity-admin-unlocked";
 const ADMIN_PASSWORD = "admin";
 let activityCache = [];
@@ -10,66 +15,10 @@ function generateActivityId() {
   return `activity-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-function cloneActivities(list) {
-  return list.map((activity, index) => normalizeActivity(activity, index));
-}
-
-function setActivityCache(list) {
-  activityCache = cloneActivities(list);
-  return getActivities();
-}
-
-function normalizeImageList(images) {
-  if (Array.isArray(images)) {
-    return images.map((image) => String(image || "").trim()).filter(Boolean);
-  }
-
-  if (typeof images === "string") {
-    return images
-      .split(/[\n,]/)
-      .map((image) => image.trim())
-      .filter(Boolean);
-  }
-
-  return [];
-}
-
-function normalizeActivity(activity, index) {
-  const source = activity || {};
-  const activityId = source.id || `activity-${index + 1}`;
-  const images = normalizeImageList(source.images);
-  const defaultRouteUrl = buildActivityDetailRoute(activityId);
-  const bannerImage = String(source.bannerImage || "").trim();
-
-  return {
-    id: activityId,
-    title: String(source.title || "").trim() || `活动 ${index + 1}`,
-    description: String(source.description || "").trim(),
-    conclusion: String(source.conclusion || "").trim(),
-    startTime: String(source.startTime || "").trim(),
-    endTime: String(source.endTime || "").trim(),
-    isBanner: source.isBanner !== false,
-    bannerImage,
-    images,
-    routeUrl: defaultRouteUrl,
-  };
-}
-
-function getActivities() {
-  if (!Array.isArray(activityCache)) {
-    return [];
-  }
-
-  return cloneActivities(activityCache);
-}
-
 async function insertActivityToCloud(activity) {
   if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {
     throw new Error("云能力不可用，无法创建活动");
   }
-  console.log("activity", activity);
-
-  return;
 
   const result = await wx.cloud.callFunction({
     name: "quickstartFunctions",
@@ -81,8 +30,8 @@ async function insertActivityToCloud(activity) {
         description: activity.description,
         startTime: activity.startTime,
         endTime: activity.endTime,
-        bannerUrl: activity.bannerImage,
-        images: activity.images,
+        bannerUrl: normalizeImageUrl(activity.bannerUrl),
+        images: normalizeImageUrls(activity.images),
         conclusion: activity.conclusion,
         status: activity.status || (activity.isBanner ? "banner" : "normal"),
         isBanner: activity.isBanner,
@@ -119,55 +68,80 @@ async function selectActivitiesFromCloud() {
     ? result.result.data
     : [];
 
-  return cloneActivities(cloudActivities);
+  return cloudActivities.map((activity) => ({
+    ...activity,
+    bannerUrl: normalizeImageUrl(activity.bannerUrl),
+    images: normalizeImageUrls(activity.images),
+  }));
+}
+
+async function selectActivityFromCloud(activityId) {
+  const trimmedActivityId = String(activityId || "").trim();
+
+  if (!trimmedActivityId) {
+    return null;
+  }
+
+  if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {
+    return null;
+  }
+
+  const result = await wx.cloud.callFunction({
+    name: "quickstartFunctions",
+    data: {
+      type: "selectActivity",
+      id: trimmedActivityId,
+    },
+  });
+
+  if (!result || !result.result || result.result.success !== true) {
+    return null;
+  }
+
+  return result.result.data
+    ? {
+        ...result.result.data,
+        bannerUrl: normalizeImageUrl(result.result.data.bannerUrl),
+        images: normalizeImageUrls(result.result.data.images),
+      }
+    : null;
 }
 
 async function createActivity(activity) {
   const source = activity || {};
   const activityId = source.id || generateActivityId();
-  const normalizedActivity = normalizeActivity(
-    {
-      ...source,
-      id: activityId,
-      bannerImage: source.bannerImage,
-    },
-    0,
-  );
+  const normalizedActivity = {
+    ...source,
+    id: activityId,
+    bannerUrl: normalizeImageUrl(source.bannerUrl),
+    images: normalizeImageUrls(source.images),
+  };
   await insertActivityToCloud(normalizedActivity);
   const nextActivities = [...getActivities(), normalizedActivity];
 
   return {
     activity: normalizedActivity,
-    activities: setActivityCache(nextActivities),
   };
 }
 
 async function loadActivities() {
   const activities = await selectActivitiesFromCloud();
-  return setActivityCache(activities);
+  return activities;
 }
 
-function getActivityById(activityId) {
-  return getActivities().find((activity) => activity.id === activityId) || null;
-}
-
-function getBannerActivities() {
-  const bannerActivities = getActivities().filter(
-    (activity) => activity.isBanner,
-  );
-  return bannerActivities.length > 0 ? bannerActivities : getActivities();
+async function loadActivity(activityId) {
+  console.log("activityId", activityId);
+  const activity = await selectActivityFromCloud(activityId);
+  return activity;
 }
 
 async function updateActivity(activityId, updates) {
-  const currentActivity = getActivityById(activityId);
-  const nextActivity = normalizeActivity(
-    {
-      ...(currentActivity || {}),
-      ...updates,
-      id: activityId,
-    },
-    0,
-  );
+  const nextActivity = {
+    ...updates,
+    id: activityId,
+    bannerUrl: normalizeImageUrl(updates.bannerUrl),
+    images: normalizeImageUrls(updates.images),
+  };
 
   if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {
     throw new Error("云能力不可用，无法保存活动");
@@ -179,7 +153,6 @@ async function updateActivity(activityId, updates) {
       type: "updateActivity",
       data: {
         ...nextActivity,
-        bannerUrl: nextActivity.bannerImage,
       },
     },
   });
@@ -190,11 +163,7 @@ async function updateActivity(activityId, updates) {
     );
   }
 
-  return setActivityCache(
-    getActivities().map((activity) =>
-      activity.id === activityId ? nextActivity : activity,
-    ),
-  );
+  return result;
 }
 
 function isAdminUnlocked() {
@@ -218,11 +187,8 @@ module.exports = {
   buildActivityDetailRoute,
   createActivity,
   loadActivities,
-  getActivities,
-  getBannerActivities,
-  getActivityById,
+  loadActivity,
   updateActivity,
-  normalizeImageList,
   isAdminUnlocked,
   unlockAdmin,
   lockAdmin,

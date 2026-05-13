@@ -1,8 +1,4 @@
-const {
-  getActivities,
-  getBannerActivities,
-  loadActivities,
-} = require("../../utils/activity-store");
+const { loadActivities } = require("../../utils/activity-store");
 
 const TAB_BAR_PAGES = [
   "/pages/activities/index",
@@ -45,51 +41,23 @@ Page({
       mode: "aspectFill",
     },
     activities: [],
-    bannerActivities: [],
     swiperList: [],
     currentBannerIndex: 0,
   },
-  syncActivities() {
-    const activities = getActivities();
-    const bannerActivities = getBannerActivities();
-    const swiperList = bannerActivities.map((activity) => ({
-      value: activity.bannerImage,
-      ariaLabel: "活动轮播图",
-    }));
-
-    this.setData({
-      activities,
-      bannerActivities,
-      swiperList,
-      currentBannerIndex:
-        bannerActivities.length === 0
-          ? 0
-          : Math.min(this.data.currentBannerIndex, bannerActivities.length - 1),
-    });
-  },
+  async loadActivities() {},
   async onShow() {
-    await loadActivities();
-    this.syncActivities();
+    const data = await loadActivities();
+    this.setData({
+      activities: data,
+      swiperList: data.map((v) => v.bannerUrl).filter(Boolean),
+    });
   },
   async onPullDownRefresh() {
     await loadActivities();
-    this.syncActivities();
     wx.stopPullDownRefresh();
   },
-  onBannerChange(event) {
-    this.setData({
-      currentBannerIndex: event.detail.current || 0,
-    });
-  },
+  onBannerChange(event) {},
   onOpenBanner() {
-    const activeBanner =
-      this.data.bannerActivities[this.data.currentBannerIndex] ||
-      this.data.bannerActivities[0];
-
-    if (!activeBanner) {
-      return;
-    }
-
     openRoute(activeBanner.routeUrl);
   },
   onOpenActivity(event) {

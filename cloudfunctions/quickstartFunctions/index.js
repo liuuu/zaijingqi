@@ -223,6 +223,33 @@ const selectActivities = async () => {
   }
 };
 
+const selectActivity = async (event) => {
+  try {
+    const activityId = String(event?.id || "").trim();
+
+    if (!activityId) {
+      return {
+        success: true,
+        data: null,
+      };
+    }
+
+    const resp = await db
+      .collection("activities")
+      .where({ id: activityId })
+      .get();
+    return {
+      success: true,
+      data: resp.data[0] || null,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errMsg: e,
+    };
+  }
+};
+
 const updateActivity = async (event) => {
   try {
     const activity = event.data;
@@ -279,6 +306,8 @@ exports.main = async (event, context) => {
       return await insertActivity(event);
     case "selectActivities":
       return await selectActivities(event);
+    case "selectActivity":
+      return await selectActivity(event);
     case "updateActivity":
       return await updateActivity(event);
   }

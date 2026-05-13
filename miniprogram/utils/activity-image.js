@@ -16,21 +16,39 @@ function uploadImageFile(tempFilePath) {
 }
 
 function buildUploadFiles(imageUrls) {
-  return (Array.isArray(imageUrls) ? imageUrls : []).map((url) => ({
+  return normalizeImageUrls(imageUrls).map((url) => ({
     url,
     status: "done",
     percent: 100,
   }));
 }
 
-function getUploadUrls(files) {
-  return (Array.isArray(files) ? files : [])
-    .map((file) => String(file && file.url ? file.url : "").trim())
+function normalizeImageUrl(image) {
+  if (typeof image === "string") {
+    return image.trim();
+  }
+
+  if (image && typeof image === "object") {
+    return String(image.url || image.fileID || image.src || "").trim();
+  }
+
+  return "";
+}
+
+function normalizeImageUrls(imageUrls) {
+  return (Array.isArray(imageUrls) ? imageUrls : [])
+    .map(normalizeImageUrl)
     .filter(Boolean);
+}
+
+function getUploadUrls(files) {
+  return normalizeImageUrls(files);
 }
 
 module.exports = {
   buildUploadFiles,
   getUploadUrls,
+  normalizeImageUrl,
+  normalizeImageUrls,
   uploadImageFile,
 };

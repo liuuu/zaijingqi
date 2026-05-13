@@ -1,4 +1,4 @@
-const { getActivityById, loadActivities } = require("../../utils/activity-store");
+const { loadActivity } = require("../../utils/activity-store");
 
 Page({
   data: {
@@ -7,12 +7,13 @@ Page({
   },
   onLoad(options) {
     this.activityId = options.id || "";
+    console.log("options.id", options.id);
   },
   async onShow() {
-    await loadActivities();
-    const activity = getActivityById(this.activityId);
+    const data = await loadActivity(this.activityId);
+    console.log("data", data);
 
-    if (!activity) {
+    if (!data) {
       wx.showToast({
         title: "未找到活动",
         icon: "none",
@@ -23,12 +24,16 @@ Page({
       return;
     }
 
+    const galleryImages = (data.images || []).map((image) => ({
+      url: image,
+      value: image,
+    }));
+
+    console.log("galleryImages", galleryImages);
+
     this.setData({
-      activity,
-      galleryImages: activity.images.map((image) => ({
-        value: image,
-        ariaLabel: activity.title,
-      })),
+      activity: data,
+      galleryImages,
     });
   },
 });
