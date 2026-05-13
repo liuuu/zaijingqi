@@ -15,7 +15,6 @@ Page({
     conclusion: "",
     startTime: "",
     endTime: "",
-    routeUrl: "",
     images: [],
     uploadFiles: [],
     isBanner: true,
@@ -56,9 +55,7 @@ Page({
     });
   },
   onUseDetailRoute() {
-    this.setData({
-      routeUrl: "",
-    });
+    this.setData({});
   },
   onUploadSuccess(event) {
     const uploadedFiles = event.detail.files || [];
@@ -90,7 +87,9 @@ Page({
           status: "done",
           percent: 100,
         };
-        const index = nextFiles.findIndex((item) => item.name === uploadedFile.name);
+        const index = nextFiles.findIndex(
+          (item) => item.name === uploadedFile.name,
+        );
 
         if (index >= 0) {
           nextFiles[index] = uploadedFile;
@@ -118,7 +117,7 @@ Page({
     }
   },
   onUploadRemove(event) {
-    const { index } = event.currentTarget.dataset;
+    const { index } = event.detail;
     const nextFiles = this.data.uploadFiles.filter(
       (_, currentIndex) => currentIndex !== Number(index),
     );
@@ -135,7 +134,6 @@ Page({
     const conclusion = String(this.data.conclusion || "").trim();
     const startTime = String(this.data.startTime || "").trim();
     const endTime = String(this.data.endTime || "").trim();
-    const routeUrl = String(this.data.routeUrl || "").trim();
 
     if (!bannerTitle) {
       wx.showToast({
@@ -161,14 +159,6 @@ Page({
       return;
     }
 
-    if (routeUrl && !routeUrl.startsWith("/pages/")) {
-      wx.showToast({
-        title: "请使用 /pages/ 路由",
-        icon: "none",
-      });
-      return;
-    }
-
     createActivity({
       bannerTitle,
       title,
@@ -176,7 +166,6 @@ Page({
       conclusion,
       startTime,
       endTime,
-      routeUrl,
       images: this.data.images,
       isBanner: this.data.isBanner,
     });
