@@ -1,7 +1,4 @@
-const {
-  normalizeImageUrl,
-  normalizeImageUrls,
-} = require("./activity-image");
+const { normalizeImageUrl, normalizeImageUrls } = require("./activity-image");
 
 const ADMIN_AUTH_STORAGE_KEY = "activity-admin-unlocked";
 const ADMIN_PASSWORD = "admin";
@@ -117,7 +114,6 @@ async function createActivity(activity) {
     images: normalizeImageUrls(source.images),
   };
   await insertActivityToCloud(normalizedActivity);
-  const nextActivities = [...getActivities(), normalizedActivity];
 
   return {
     activity: normalizedActivity,
@@ -166,6 +162,34 @@ async function updateActivity(activityId, updates) {
   return result;
 }
 
+async function deleteActivity(activityId) {
+  const trimmedActivityId = String(activityId || "").trim();
+
+  if (!trimmedActivityId) {
+    throw new Error("活动 ID 不能为空");
+  }
+
+  if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {
+    throw new Error("云能力不可用，无法删除活动");
+  }
+
+  const result = await wx.cloud.callFunction({
+    name: "quickstartFunctions",
+    data: {
+      type: "deleteActivity",
+      id: trimmedActivityId,
+    },
+  });
+
+  if (!result || !result.result || result.result.success !== true) {
+    throw new Error(
+      (result && result.result && result.result.errMsg) || "删除活动失败",
+    );
+  }
+
+  return result.result;
+}
+
 function isAdminUnlocked() {
   return Boolean(wx.getStorageSync(ADMIN_AUTH_STORAGE_KEY));
 }
@@ -189,6 +213,7 @@ module.exports = {
   loadActivities,
   loadActivity,
   updateActivity,
+  deleteActivity,
   isAdminUnlocked,
   unlockAdmin,
   lockAdmin,

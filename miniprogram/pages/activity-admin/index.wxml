@@ -19,6 +19,9 @@
         预览
       </t-button>
       <t-button theme="primary" data-id="{{item.id}}" bind:tap="onEditActivity">编辑</t-button>
+      <t-button theme="danger" variant="outline" data-id="{{item.id}}" loading="{{deletingActivityId === item.id}}" bind:tap="onDeleteActivity">
+        删除
+      </t-button>
     </view>
   </view>
 </view>

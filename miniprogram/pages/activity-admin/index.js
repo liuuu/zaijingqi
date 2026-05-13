@@ -1,24 +1,13 @@
 const {
   loadActivities,
   isAdminUnlocked,
+  deleteActivity,
 } = require("../../utils/activity-store");
 
 Page({
   data: {
     activities: [],
-  },
-  onLoad() {
-    return;
-    wx.cloud
-      .callFunction({
-        name: "quickstartFunctions",
-        data: {
-          type: "fetchUsers",
-        },
-      })
-      .then((res) => {
-        console.log("fetchUsers res", res);
-      });
+    deletingActivityId: "",
   },
   async onShow() {
     if (!isAdminUnlocked()) {
@@ -33,7 +22,6 @@ Page({
     }
 
     const data = await loadActivities();
-    console.log("data", data);
     this.setData({
       activities: data,
     });
@@ -45,7 +33,6 @@ Page({
   },
   onEditActivity(event) {
     const { id } = event.currentTarget.dataset;
-    console.log("id", id);
 
     wx.navigateTo({
       url: `/pages/activity-create/index?id=${id}`,
@@ -57,5 +44,52 @@ Page({
     wx.navigateTo({
       url: `/pages/activity-detail/index?id=${id}`,
     });
+  },
+  async onDeleteActivity(event) {
+    const { id } = event.currentTarget.dataset;
+    const confirm = await new Promise((resolve) => {
+      wx.showModal({
+        title: "删除活动",
+        content: "确定要删除这个活动吗？删除后无法恢复。",
+        confirmText: "删除",
+        confirmColor: "#e34d59",
+        success(res) {
+          resolve(Boolean(res.confirm));
+        },
+        fail() {
+          resolve(false);
+        },
+      });
+    });
+
+    if (!confirm) return;
+
+    this.setData({
+      deletingActivityId: id,
+    });
+
+    wx.showLoading({ title: "删除中..." });
+
+    try {
+      await deleteActivity(id);
+      const activities = await loadActivities();
+      this.setData({
+        activities,
+      });
+      wx.showToast({
+        title: "已删除",
+        icon: "success",
+      });
+    } catch (error) {
+      wx.showToast({
+        title: error.message || "删除失败",
+        icon: "none",
+      });
+    } finally {
+      this.setData({
+        deletingActivityId: "",
+      });
+      wx.hideLoading();
+    }
   },
 });

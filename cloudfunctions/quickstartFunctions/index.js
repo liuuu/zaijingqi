@@ -283,6 +283,35 @@ const updateActivity = async (event) => {
     };
   }
 };
+
+const deleteActivity = async (event) => {
+  try {
+    const activityId = String(event?.id || "").trim();
+
+    if (!activityId) {
+      return {
+        success: false,
+        errMsg: "活动 ID 不能为空",
+      };
+    }
+
+    await db
+      .collection("activities")
+      .where({
+        id: activityId,
+      })
+      .remove();
+
+    return {
+      success: true,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errMsg: e,
+    };
+  }
+};
 // 云函数入口函数
 exports.main = async (event, context) => {
   switch (event.type) {
@@ -310,5 +339,7 @@ exports.main = async (event, context) => {
       return await selectActivity(event);
     case "updateActivity":
       return await updateActivity(event);
+    case "deleteActivity":
+      return await deleteActivity(event);
   }
 };
