@@ -176,6 +176,94 @@ const fetchUsers = async () => {
   }
 };
 
+const selectMyUserProfile = async () => {
+  try {
+    const wxContext = cloud.getWXContext();
+    const openid = wxContext.OPENID;
+
+    if (!openid) {
+      return {
+        success: false,
+        errMsg: "openid 不能为空",
+      };
+    }
+
+    const result = await db.collection("users").where({ openid }).limit(1).get();
+    return {
+      success: true,
+      data: result.data && result.data.length > 0 ? result.data[0] : null,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errMsg: e,
+    };
+  }
+};
+
+const upsertUserProfile = async (event) => {
+  try {
+    const wxContext = cloud.getWXContext();
+    const openid = wxContext.OPENID;
+    const payload = event.data || {};
+    const nickName = String(payload.nickName || "").trim();
+    const avatarUrl = String(payload.avatarUrl || "").trim();
+
+    if (!openid) {
+      return {
+        success: false,
+        errMsg: "openid 不能为空",
+      };
+    }
+
+    if (!nickName && !avatarUrl) {
+      return {
+        success: false,
+        errMsg: "昵称或头像不能为空",
+      };
+    }
+
+    const users = db.collection("users");
+    const existing = await users.where({ openid }).limit(1).get();
+    const profileData = {
+      openid,
+      nickName,
+      avatarUrl,
+      updatedAt: db.serverDate(),
+    };
+
+    if (existing.data && existing.data.length > 0) {
+      await users.where({ openid }).update({
+        data: profileData,
+      });
+      return {
+        success: true,
+        data: profileData,
+      };
+    }
+
+    const createdAt = db.serverDate();
+    await users.add({
+      data: {
+        ...profileData,
+        createdAt,
+      },
+    });
+    return {
+      success: true,
+      data: {
+        ...profileData,
+        createdAt,
+      },
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errMsg: e,
+    };
+  }
+};
+
 const address = "在惊奇AI探索空间";
 
 const insertActivity = async (event) => {
@@ -416,6 +504,10 @@ exports.main = async (event, context) => {
       return await deleteRecord(event);
     case "fetchUsers":
       return await fetchUsers(event);
+    case "selectMyUserProfile":
+      return await selectMyUserProfile();
+    case "upsertUserProfile":
+      return await upsertUserProfile(event);
     case "insertActivity":
       return await insertActivity(event);
     case "selectActivities":

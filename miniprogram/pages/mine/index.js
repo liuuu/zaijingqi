@@ -10,16 +10,235 @@ Page({
     password: "",
     isUnlocked: false,
     showPasswordDialog: false,
+    openid: "",
+    isProfileLoaded: false,
+    hasProfileRecord: false,
+    profile: {
+      avatarUrl: "",
+      nickName: "探索者",
+    },
+    isProfileSaving: false,
+  },
+  onLoad() {
+    this.loadProfileState();
   },
   onShow() {
     this.syncAccessState();
+    if (!this.data.isProfileLoaded) {
+      this.loadProfileState();
+    }
   },
   syncAccessState() {
     this.setData({
       isUnlocked: isAdminUnlocked(),
     });
   },
-  onMenuTap(event) {
+  syncProfileState() {
+    const storedProfile = wx.getStorageSync("userProfile") || {};
+    this.setData({
+      profile: {
+        avatarUrl: storedProfile.avatarUrl || "",
+        nickName: storedProfile.nickName || "探索者",
+      },
+    });
+  },
+  setProfile(profile, hasProfileRecord) {
+    const nextProfile = {
+      avatarUrl: profile && profile.avatarUrl ? profile.avatarUrl : "",
+      nickName: profile && profile.nickName ? profile.nickName : "探索者",
+    };
+    wx.setStorageSync("userProfile", nextProfile);
+    this.setData({
+      profile: nextProfile,
+      hasProfileRecord: Boolean(hasProfileRecord),
+    });
+  },
+  async syncOpenId() {
+    const cachedOpenId = wx.getStorageSync("openid");
+    if (cachedOpenId) {
+      this.setData({
+        openid: cachedOpenId,
+      });
+      return cachedOpenId;
+    }
+
+    if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {
+      return "";
+    }
+
+    try {
+      const resp = await wx.cloud.callFunction({
+        name: "quickstartFunctions",
+        data: {
+          type: "getOpenId",
+        },
+      });
+      const openid = resp?.result?.openid || "";
+      if (openid) {
+        wx.setStorageSync("openid", openid);
+        this.setData({
+          openid,
+        });
+      }
+      return openid;
+    } catch (error) {
+      console.error("获取 openid 失败", error);
+      return "";
+    }
+  },
+  async loadProfileState() {
+    this.setData({
+      isProfileLoaded: false,
+    });
+
+    const openid = await this.syncOpenId();
+    if (!openid) {
+      this.syncProfileState();
+      this.setData({
+        isProfileLoaded: true,
+      });
+      return;
+    }
+
+    if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {
+      this.syncProfileState();
+      this.setData({
+        isProfileLoaded: true,
+      });
+      return;
+    }
+
+    try {
+      const resp = await wx.cloud.callFunction({
+        name: "quickstartFunctions",
+        data: {
+          type: "selectMyUserProfile",
+        },
+      });
+      const userProfile = resp && resp.result ? resp.result.data : null;
+      if (resp && resp.result && resp.result.success === true && userProfile) {
+        this.setProfile(userProfile, true);
+      } else {
+        this.syncProfileState();
+        this.setData({
+          hasProfileRecord: false,
+        });
+      }
+    } catch (error) {
+      console.error("加载用户资料失败", error);
+      this.syncProfileState();
+      this.setData({
+        hasProfileRecord: false,
+      });
+    } finally {
+      this.setData({
+        isProfileLoaded: true,
+      });
+    }
+  },
+  async onTapAvatar() {
+    if (this.data.isProfileSaving) {
+      return;
+    }
+
+    if (this.data.hasProfileRecord) {
+      wx.showToast({
+        title: "资料已存在",
+        icon: "none",
+      });
+      return;
+    }
+
+    if (!wx.getUserProfile) {
+      wx.showToast({
+        title: "当前基础库不支持该功能",
+        icon: "none",
+      });
+      return;
+    }
+
+    try {
+      this.setData({
+        isProfileSaving: true,
+      });
+
+      const profileResult = await wx.getUserProfile({
+        desc: "用于完善我的页面头像和昵称",
+      });
+
+      const userInfo = profileResult?.userInfo || {};
+      const nickName = (userInfo.nickName || "").trim();
+      const avatarUrl = userInfo.avatarUrl || "";
+
+      if (!nickName && !avatarUrl) {
+        wx.showToast({
+          title: "未获取到头像昵称",
+          icon: "none",
+        });
+        return;
+      }
+
+      const openid = await this.syncOpenId();
+      if (!openid) {
+        wx.showToast({
+          title: "未获取到 openid",
+          icon: "none",
+        });
+        return;
+      }
+
+      if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {
+        wx.showToast({
+          title: "云能力不可用",
+          icon: "none",
+        });
+        return;
+      }
+
+      wx.showLoading({
+        title: "保存中...",
+      });
+
+      const resp = await wx.cloud.callFunction({
+        name: "quickstartFunctions",
+        data: {
+          type: "upsertUserProfile",
+          data: {
+            nickName,
+            avatarUrl,
+          },
+        },
+      });
+
+      if (!resp || !resp.result || resp.result.success !== true) {
+        throw new Error(
+          (resp && resp.result && resp.result.errMsg) || "保存个人资料失败",
+        );
+      }
+
+      this.setProfile(
+        {
+          avatarUrl,
+          nickName: nickName || "探索者",
+        },
+        true,
+      );
+      wx.showToast({
+        title: "头像已更新",
+      });
+    } catch (error) {
+      wx.showToast({
+        title: error?.message || "更新失败",
+        icon: "none",
+      });
+    } finally {
+      wx.hideLoading();
+      this.setData({
+        isProfileSaving: false,
+      });
+    }
+  },
+  onMenuTap() {
     wx.showToast({
       title: "功能暂未开放",
       icon: "none",
@@ -91,14 +310,6 @@ Page({
     wx.showToast({
       title: "管理已锁定",
       icon: "none",
-    });
-  },
-  onOpenManager() {
-    this.setData({
-      showPasswordDialog: false,
-    });
-    wx.navigateTo({
-      url: "/pages/activity-admin/index",
     });
   },
 });

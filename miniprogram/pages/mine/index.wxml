@@ -1,7 +1,14 @@
 <view class="page">
   <view class="profile-card">
-    <view class="avatar">🦊</view>
-    <view class="nickname">探索者</view>
+    <view class="avatar-wrap">
+      <view class="avatar">
+        <image wx:if="{{profile.avatarUrl}}" class="avatar__image" src="{{profile.avatarUrl}}" mode="aspectFill" />
+        <view wx:else class="avatar__placeholder">🦊</view>
+      </view>
+      <button wx:if="{{isProfileLoaded && !hasProfileRecord}}" class="avatar-button" bindtap="onTapAvatar" hover-class="none" aria-label="编辑头像和昵称"></button>
+      <view class="avatar__badge">{{!isProfileLoaded ? "加载中" : (hasProfileRecord ? "已完善" : (isProfileSaving ? "保存中" : "编辑"))}}</view>
+    </view>
+    <view class="nickname">{{profile.nickName}}</view>
     <view class="motto">保持好奇，永远惊奇</view>
   </view>
   <view class="menu-card">

@@ -57,16 +57,58 @@ page {
   text-align: center;
 }
 
-.avatar {
+.avatar-wrap {
+  position: relative;
   width: 200rpx;
   height: 200rpx;
   margin: 0 auto;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   background: #eb743c;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+}
+
+.avatar__image {
+  width: 100%;
+  height: 100%;
+}
+
+.avatar__placeholder {
   font-size: 100rpx;
+}
+
+.avatar-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+}
+
+.avatar-button::after {
+  border: 0;
+}
+
+.avatar__badge {
+  position: absolute;
+  right: -8rpx;
+  bottom: 8rpx;
+  padding: 8rpx 16rpx;
+  border-radius: 999rpx;
+  background: rgba(0, 0, 0, 0.58);
+  color: #ffffff;
+  font-size: 22rpx;
 }
 
 .nickname {
