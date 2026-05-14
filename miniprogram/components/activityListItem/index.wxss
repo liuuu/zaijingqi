@@ -15,9 +15,9 @@
   flex: 0 0 180rpx;
   width: 180rpx;
   height: 200rpx;
-  border-radius: 24rpx;
+  border-radius: 0rpx;
   overflow: hidden;
-  background: #f0f2f5;
+
 }
 
 .activity-card__cover {

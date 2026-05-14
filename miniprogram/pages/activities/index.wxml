@@ -1,14 +1,9 @@
 <view class="page">
   <view wx:if="{{swiperList.length}}" class="swiper-section">
-    <t-swiper class="activities-swiper" list="{{swiperList}}" height="360rpx" autoplay="{{true}}" duration="{{500}}" interval="{{4000}}" navigation="{{true}}" current="{{currentBannerIndex}}" imageProps="{{imageProps}}" bind:change="onBannerChange" bind:click="onOpenBanner" />
+    <t-swiper class="activities-swiper" list="{{swiperList}}" height="560rpx" autoplay="{{true}}" duration="{{500}}" interval="{{4000}}" navigation="{{true}}" current="{{currentBannerIndex}}" imageProps="{{imageProps}}" bind:change="onBannerChange" bind:click="onOpenBanner" />
   </view>
+  <view class="section-title">近期活动</view>
   <view class="activity-list">
-    <activity-list-item
-      wx:for="{{activities}}"
-      wx:key="id"
-      activity="{{item}}"
-      data-route-url="{{item.routeUrl}}"
-      bind:tap="onOpenActivity"
-    />
+    <activity-list-item wx:for="{{activities}}" wx:key="id" activity="{{item}}" data-route-url="{{item.routeUrl}}" bind:tap="onOpenActivity" />
   </view>
 </view>

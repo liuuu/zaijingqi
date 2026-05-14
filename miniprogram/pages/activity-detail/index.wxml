@@ -1,31 +1,33 @@
 <view wx:if="{{activity}}" class="page">
   <view class="banner-section">
     <view class="banner-card">
-      <t-image class="banner-image" src="{{activity.bannerUrl}}" mode="aspectFill" />
-      <view class="banner-overlay"></view>
+      <t-image class="banner-image" src="{{activity.bannerUrl}}" mode="aspectFit" bindtap="onImageTap" />
+      <!-- <view class="banner-overlay"></view> -->
     </view>
   </view>
   <view class="card">
     <view class="banner-overlay__subtitle">{{activity.title}}</view>
-    <view class="description">{{activity.description}}</view>
     <view class="tag-row">
-      <t-tag wx:if="{{activity.startTimeStr || activity.startTime}}" theme="warning" variant="light">
+      <t-tag wx:if="{{activity.startTimeStr || activity.startTime}}" theme="success" variant="light">
         开始 {{activity.startTimeStr || activity.startTime}}
       </t-tag>
-      <t-tag wx:if="{{activity.endTimeStr || activity.endTime}}" theme="success" variant="light">
+      <t-tag wx:if="{{activity.endTimeStr || activity.endTime}}" theme="warning" variant="light">
         结束 {{activity.endTimeStr || activity.endTime}}
       </t-tag>
     </view>
   </view>
   <view class="card">
-    <t-divider content="活动总结" />
+    <view class="section-title">活动介绍</view>
+    <view class="conclusion">{{activity.description}}</view>
+  </view>
+  <view class="card" wx:if="{{activity.conclusion}}">
+    <view class="section-title">活动总结</view>
     <view class="conclusion">{{activity.conclusion || '暂无结论。'}}</view>
   </view>
-  <view class="card">
+  <view class="card" wx:if="{{galleryImages.length}}">
     <view class="section-title">活动图片</view>
     <view wx:if="{{galleryImages.length}}" class="image-grid">
       <t-image wx:for="{{galleryImages}}" wx:key="url" class="detail-image" src="{{item.url}}" mode="aspectFill" />
     </view>
-    <view wx:else class="empty-text">暂无活动图片</view>
   </view>
 </view>

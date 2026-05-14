@@ -46,6 +46,7 @@ Component({
   },
   methods: {
     onTap() {
+      console.log("this.data.activity", this.data.activity);
       this.triggerEvent("tap", {
         activity: this.data.activity,
       });

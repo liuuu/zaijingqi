@@ -38,30 +38,48 @@ Page({
     title: "活动",
     description: "点击顶部轮播或下方列表，打开对应活动详情页。",
     imageProps: {
-      mode: "aspectFill",
+      mode: "aspectFit",
     },
     activities: [],
     swiperList: [],
     currentBannerIndex: 0,
+    activeBanner: null,
   },
-  async loadActivities() {},
-  async onShow() {
+  async loadActivities() {
     const data = await loadActivities();
     this.setData({
       activities: data,
       swiperList: data.map((v) => v.bannerUrl).filter(Boolean),
+      activeBanner: data[0] || null,
     });
   },
+  async onLoad() {
+    console.log("onLoad");
+    await this.loadActivities();
+  },
   async onPullDownRefresh() {
-    await loadActivities();
+    await this.loadActivities();
     wx.stopPullDownRefresh();
   },
-  onBannerChange(event) {},
+  onBannerChange(event) {
+    const currentIdx = event.detail.current || 0;
+    const activeBanner = this.data.activities[currentIdx] || null;
+    this.setData({
+      currentBannerIndex: currentIdx,
+      activeBanner,
+    });
+  },
   onOpenBanner() {
-    openRoute(activeBanner.routeUrl);
+    const { activeBanner } = this.data;
+    const routeUrl = `/pages/activity-detail/index?id=${activeBanner.id}`;
+    openRoute(routeUrl);
   },
   onOpenActivity(event) {
-    const { routeUrl } = event.currentTarget.dataset;
-    openRoute(routeUrl);
+    console.log("event", event.detail.activity);
+    // TODO: why this works? is activity id missing in event.detail.activity?
+    if (event.detail.activity && event.detail.activity.id) {
+      const routeUrl = `/pages/activity-detail/index?id=${event.detail.activity.id}`;
+      openRoute(routeUrl);
+    }
   },
 });

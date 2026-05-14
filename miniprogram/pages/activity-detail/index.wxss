@@ -23,7 +23,7 @@ page {
   height: 420rpx;
   border-radius: 24rpx;
   overflow: hidden;
-  background: #e9eef8;
+  /* background: #e9eef8; */
 }
 
 .banner-image {

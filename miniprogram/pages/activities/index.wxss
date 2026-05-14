@@ -21,3 +21,10 @@ page {
   flex-direction: column;
   gap: 24rpx;
 }
+
+.section-title {
+  margin-bottom: 20rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #111111;
+}

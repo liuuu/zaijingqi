@@ -1,10 +1,12 @@
 <view class="activity-card" hover-class="activity-card--hover" hover-stay-time="80" bindtap="onTap">
   <view class="activity-card__cover-wrap">
-    <image wx:if="{{activity.bannerUrl}}" class="activity-card__cover" mode="aspectFill" src="{{activity.bannerUrl}}" />
+    <image wx:if="{{activity.bannerUrl}}" class="activity-card__cover" mode="aspectFit" src="{{activity.bannerUrl}}" />
     <view wx:else class="activity-card__cover activity-card__cover--placeholder"></view>
   </view>
   <view class="activity-card__content">
-    <view class="activity-card__time">{{activity.dateLabel || activity.startTimeStr || activity.startTime}}</view>
+    <view class="activity-card__time">
+      {{activity.dateLabel || activity.startTimeStr || activity.startTime}}
+    </view>
     <view class="activity-card__title">{{activity.title}}</view>
     <view class="activity-card__description">{{activity.detailLabel || activity.description}}</view>
     <view class="activity-card__meta">

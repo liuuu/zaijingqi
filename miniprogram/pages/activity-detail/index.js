@@ -36,4 +36,14 @@ Page({
       galleryImages,
     });
   },
+  onImageTap() {
+    const { activity } = this.data;
+    if (!activity || !activity.bannerUrl) {
+      return;
+    }
+    wx.previewImage({
+      urls: [activity.bannerUrl],
+      current: activity.bannerUrl,
+    });
+  },
 });
