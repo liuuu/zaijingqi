@@ -11,7 +11,7 @@ Page({
   },
   async onShow() {
     const data = await loadActivity(this.activityId);
-    console.log("data", JSON.stringify(data));
+    console.log("data", data);
 
     if (!data) {
       wx.showToast({

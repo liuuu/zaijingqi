@@ -16,8 +16,12 @@ page {
   overflow: hidden;
 }
 
+.section-header {
+  padding-top: 20rpx;
+  padding-bottom: 20rpx;
+}
+
 .section-title {
-  margin-bottom: 20rpx;
   font-size: 30rpx;
   font-weight: 600;
   color: #111111;
@@ -28,7 +32,7 @@ page {
 }
 
 .section-block--review {
-  margin-top: 20rpx;
+  margin-top: 40rpx;
 }
 
 .activity-list {
@@ -41,7 +45,7 @@ page {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20rpx;
+  align-items: center;
 }
 
 .section-more {
