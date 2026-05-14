@@ -74,6 +74,8 @@ function normalizeActivity(activity) {
 
   const startTime = Number(activity.startTime);
   const endTime = Number(activity.endTime);
+  const latitude = Number(activity.latitude);
+  const longitude = Number(activity.longitude);
   const startTimeStr = formatActivityTime(activity.startTimeStr || startTime);
   const endTimeStr = formatActivityTime(activity.endTimeStr || endTime);
 
@@ -83,6 +85,8 @@ function normalizeActivity(activity) {
     images: normalizeImageUrls(activity.images),
     startTime: Number.isFinite(startTime) ? startTime : activity.startTime,
     endTime: Number.isFinite(endTime) ? endTime : activity.endTime,
+    latitude: Number.isFinite(latitude) ? latitude : activity.latitude,
+    longitude: Number.isFinite(longitude) ? longitude : activity.longitude,
     startTimeStr,
     endTimeStr,
   };
@@ -104,6 +108,9 @@ async function insertActivityToCloud(activity) {
         ...buildActivityTimeFields(activity),
         bannerUrl: normalizeImageUrl(activity.bannerUrl),
         images: normalizeImageUrls(activity.images),
+        address: activity.address,
+        latitude: activity.latitude,
+        longitude: activity.longitude,
         conclusion: activity.conclusion,
         status: activity.status || (activity.isBanner ? "banner" : "normal"),
         isBanner: activity.isBanner,
@@ -291,6 +298,9 @@ async function updateActivity(activityId, updates) {
     bannerUrl: normalizeImageUrl(updates.bannerUrl),
     images: normalizeImageUrls(updates.images),
     ...buildActivityTimeFields(updates),
+    address: updates.address,
+    latitude: updates.latitude,
+    longitude: updates.longitude,
   };
 
   if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {

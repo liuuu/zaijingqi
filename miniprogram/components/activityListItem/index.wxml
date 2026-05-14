@@ -9,10 +9,11 @@
     </view>
     <view class="activity-card__title">{{activity.title}}</view>
     <view class="activity-card__description">{{activity.detailLabel || activity.description}}</view>
-    <view class="activity-card__meta">
-      <text wx:if="{{activity.address || activity.endTimeStr || activity.endTime}}" class="activity-card__meta-secondary">
-        {{activity.address || activity.endTimeStr || activity.endTime}}
-      </text>
+    <view class="activity-card__meta" catchtap="onIconTap">
+      <t-icon name="location-filled" size="30rpx" data-name="location-filled" />
+      <view wx:if="{{activity.address}}" class="activity-card__meta-secondary">
+        {{activity.address}}
+      </view>
     </view>
   </view>
 </view>

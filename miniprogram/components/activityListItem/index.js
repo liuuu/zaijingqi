@@ -45,6 +45,27 @@ Component({
     displayTime: "",
   },
   methods: {
+    onIconTap() {
+      const activity = this.data.activity || {};
+
+      const latitude = Number(activity.latitude) || 30.64391;
+      const longitude = Number(activity.longitude) || 104.11902;
+
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+        wx.showToast({
+          title: "暂无地图位置",
+          icon: "none",
+        });
+        return;
+      }
+
+      wx.openLocation({
+        latitude,
+        longitude,
+        name: String(activity.title || activity.address || "").trim(),
+        address: String(activity.address || "").trim(),
+      });
+    },
     onTap() {
       console.log("this.data.activity", this.data.activity);
       this.triggerEvent("tap", {

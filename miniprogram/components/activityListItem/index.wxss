@@ -59,14 +59,17 @@
 }
 
 .activity-card__meta {
-  margin-top: auto;
+
   padding-top: 16rpx;
   font-size: 26rpx;
-  line-height: 1.4;
   color: #999999;
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  justify-content: flex-start;
+  align-items: center;
+  line-height: 1;
+  flex-direction: row;
+  color: #ff7a45;
 }
 
 .activity-card__meta-primary {
@@ -74,7 +77,11 @@
 }
 
 .activity-card__meta-secondary {
-  color: #999999;
+  display: inline-flex;
+  color: #ff7a45;
+  margin-left: 8rpx;
+  justify-content: center;
+  align-items: center;
 }
 .activity-card__description {
   margin-top: 12rpx;
