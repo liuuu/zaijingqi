@@ -154,7 +154,30 @@ async function selectRecentActivitiesFromCloud() {
       type: "loadRecentActivities",
     },
   });
-  console.log("result", result);
+
+  if (!result || !result.result || result.result.success !== true) {
+    return [];
+  }
+
+  const cloudActivities = Array.isArray(result.result.data)
+    ? result.result.data
+    : [];
+
+  return cloudActivities.map((activity) => normalizeActivity(activity));
+}
+
+async function selectRecentEndActivitiesFromCloud() {
+  if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {
+    return [];
+  }
+
+  const result = await wx.cloud.callFunction({
+    name: "quickstartFunctions",
+    data: {
+      type: "loadRecentEndActivities",
+    },
+  });
+  console.log("result--", result);
 
   if (!result || !result.result || result.result.success !== true) {
     return [];
@@ -217,6 +240,11 @@ async function loadActivities() {
 
 async function loadRecentActivities() {
   const activities = await selectRecentActivitiesFromCloud();
+  return activities;
+}
+
+async function loadRecentEndActivities() {
+  const activities = await selectRecentEndActivitiesFromCloud();
   return activities;
 }
 
@@ -308,6 +336,8 @@ module.exports = {
   createActivity,
   loadActivities,
   loadRecentActivities,
+  loadRecentEndActivities,
+
   loadActivity,
   updateActivity,
   deleteActivity,

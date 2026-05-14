@@ -1,5 +1,6 @@
 const {
   loadRecentActivities,
+  loadRecentEndActivities,
 } = require("../../utils/activity-store");
 
 const TAB_BAR_PAGES = [
@@ -46,17 +47,23 @@ Page({
     swiperList: [],
     currentBannerIndex: 0,
     activeBanner: null,
+    reviewActivities: [],
   },
   async loadActivities() {
-    const data = await loadRecentActivities();
+    const [activities, reviewActivities] = await Promise.all([
+      loadRecentActivities(),
+      loadRecentEndActivities(),
+    ]);
+
+    console.log("reviewActivities", reviewActivities);
     this.setData({
-      activities: data,
-      swiperList: data.map((v) => v.bannerUrl).filter(Boolean),
-      activeBanner: data[0] || null,
+      activities,
+      swiperList: activities.map((v) => v.bannerUrl).filter(Boolean),
+      activeBanner: activities[0] || null,
+      reviewActivities,
     });
   },
   async onLoad() {
-    console.log("onLoad");
     await this.loadActivities();
   },
   async onPullDownRefresh() {
@@ -73,15 +80,17 @@ Page({
   },
   onOpenBanner() {
     const { activeBanner } = this.data;
-    const routeUrl = `/pages/activity-detail/index?id=${activeBanner.id}`;
-    openRoute(routeUrl);
+    if (!activeBanner || !activeBanner.id) {
+      return;
+    }
+    openRoute(`/pages/activity-detail/index?id=${activeBanner.id}`);
   },
   onOpenActivity(event) {
-    console.log("event", event.detail.activity);
-    // TODO: why this works? is activity id missing in event.detail.activity?
-    if (event.detail.activity && event.detail.activity.id) {
-      const routeUrl = `/pages/activity-detail/index?id=${event.detail.activity.id}`;
-      openRoute(routeUrl);
+    const activityId =
+      event?.detail?.activity?.id || event?.currentTarget?.dataset?.id || "";
+
+    if (activityId) {
+      openRoute(`/pages/activity-detail/index?id=${activityId}`);
     }
   },
 });

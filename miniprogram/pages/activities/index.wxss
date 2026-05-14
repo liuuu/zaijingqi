@@ -16,15 +16,122 @@ page {
   overflow: hidden;
 }
 
+.section-title {
+  margin-bottom: 20rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #111111;
+}
+
+.section-block {
+  margin-bottom: 24rpx;
+}
+
+.section-block--review {
+  margin-top: 20rpx;
+}
+
 .activity-list {
   display: flex;
   flex-direction: column;
   gap: 24rpx;
 }
 
-.section-title {
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 20rpx;
+}
+
+.section-more {
+  font-size: 26rpx;
+  color: #666666;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.section-more-arrow {
   font-size: 30rpx;
-  font-weight: 600;
+  line-height: 1;
+}
+
+.review-scroll {
+  white-space: nowrap;
+}
+
+.review-list {
+  display: flex;
+  gap: 24rpx;
+  padding-bottom: 8rpx;
+}
+
+.review-card {
+  width: 312rpx;
+  flex: 0 0 312rpx;
+}
+
+.review-card__cover-wrap {
+  position: relative;
+  width: 100%;
+  height: 400rpx;
+  border-radius: 28rpx;
+  overflow: hidden;
+  background: #e9ecef;
+}
+
+.review-card__cover {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.review-card__cover--placeholder {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+}
+
+.review-card__badge {
+  position: absolute;
+  left: 16rpx;
+  top: 16rpx;
+  padding: 8rpx 16rpx;
+  border-radius: 999rpx;
+  background: rgba(84, 174, 145, 0.92);
+  color: #ffffff;
+  font-size: 24rpx;
+  line-height: 1;
+}
+
+.review-card__title {
+  margin-top: 16rpx;
+  font-size: 32rpx;
+  line-height: 1.35;
+  font-weight: 700;
   color: #111111;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.review-card__subtitle {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  line-height: 1.4;
+  color: #999999;
+}
+
+.review-card__desc {
+  margin-top: 10rpx;
+  font-size: 26rpx;
+  line-height: 1.4;
+  color: #666666;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

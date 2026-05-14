@@ -4,6 +4,29 @@
   </view>
   <view class="section-title">近期活动</view>
   <view class="activity-list">
-    <activity-list-item wx:for="{{activities}}" wx:key="id" activity="{{item}}" data-route-url="{{item.routeUrl}}" bind:tap="onOpenActivity" />
+    <activity-list-item wx:for="{{activities}}" wx:key="id" activity="{{item}}" bind:tap="onOpenActivity" />
+  </view>
+  <view class="section-block section-block--review">
+    <view class="section-header">
+      <view class="section-title">活动回顾</view>
+      <view class="section-more">
+        更多
+        <text class="section-more-arrow">›</text>
+      </view>
+    </view>
+    <scroll-view class="review-scroll" scroll-x="true" show-scrollbar="false">
+      <view class="review-list">
+        <view wx:for="{{reviewActivities}}" wx:key="id" class="review-card" bindtap="onOpenActivity" data-id="{{item.id}}">
+          <view class="review-card__cover-wrap">
+            <image wx:if="{{item.bannerUrl}}" class="review-card__cover" mode="aspectFill" src="{{item.bannerUrl}}" />
+            <view wx:else class="review-card__cover review-card__cover--placeholder"></view>
+            <view class="review-card__badge">{{item.address || "活动"}}</view>
+          </view>
+          <view class="review-card__title">{{item.title}}</view>
+          <view class="review-card__subtitle">{{item.endTimeStr || item.startTimeStr}}</view>
+          <view class="review-card__desc">{{item.address}}</view>
+        </view>
+      </view>
+    </scroll-view>
   </view>
 </view>
