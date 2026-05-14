@@ -22,7 +22,7 @@
   </view>
   <view class="card" wx:if="{{activity.conclusion}}">
     <view class="section-title">活动总结</view>
-    <view class="conclusion">{{activity.conclusion || '暂无结论。'}}</view>
+    <view class="conclusion">{{activity.conclusion || '暂无总结。'}}</view>
   </view>
   <view class="card" wx:if="{{galleryImages.length}}">
     <view class="section-title">活动图片</view>

@@ -188,6 +188,8 @@ const insertActivity = async (event) => {
         description: activity.description,
         startTime: activity.startTime,
         endTime: activity.endTime,
+        startTimeStr: activity.startTimeStr,
+        endTimeStr: activity.endTimeStr,
         bannerUrl: activity.bannerUrl,
         images: activity.images,
         address: activity.address || address,
@@ -337,21 +339,23 @@ const updateActivity = async (event) => {
       .where({
         id: activity.id,
       })
-        .update({
-          data: {
-            title: activity.title,
-            description: activity.description,
-            startTime: activity.startTime,
-            endTime: activity.endTime,
-            bannerUrl: activity.bannerUrl,
-            images: activity.images,
-            address: activity.address || address,
-            latitude: activity.latitude,
-            longitude: activity.longitude,
-            conclusion: activity.conclusion,
-            status: activity.status,
-            isBanner: activity.isBanner,
-          },
+      .update({
+        data: {
+          title: activity.title,
+          description: activity.description,
+          startTime: activity.startTime,
+          endTime: activity.endTime,
+          bannerUrl: activity.bannerUrl,
+          images: activity.images,
+          address: activity.address || address,
+          latitude: activity.latitude,
+          longitude: activity.longitude,
+          conclusion: activity.conclusion,
+          status: activity.status,
+          isBanner: activity.isBanner,
+          startTimeStr: activity.startTimeStr,
+          endTimeStr: activity.endTimeStr,
+        },
       });
     return {
       success: true,

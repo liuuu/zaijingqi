@@ -13,9 +13,11 @@ function formatActivityTime(value) {
     const timestamp = Number(text);
     if (Number.isFinite(timestamp)) {
       const time = dayjs(timestamp);
-      return `${time.format("M.D")} ${WEEKDAY_LABELS[time.day()]} ${time.format(
+      const ret = `${time.format("M.D")} ${WEEKDAY_LABELS[time.day()]} ${time.format(
         "HH:mm",
       )}`;
+
+      return ret;
     }
   }
 
@@ -35,6 +37,7 @@ Component({
       type: Object,
       value: {},
       observer(activity) {
+        console.log("activity000", activity);
         this.setData({
           displayTime: formatActivityTime(activity && activity.startTime),
         });
@@ -67,7 +70,6 @@ Component({
       });
     },
     onTap() {
-      console.log("this.data.activity", this.data.activity);
       this.triggerEvent("tap", {
         activity: this.data.activity,
       });

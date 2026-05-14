@@ -14,59 +14,6 @@ function generateActivityId() {
   return `activity-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-function toTimestamp(value) {
-  const text = String(value ?? "").trim();
-
-  if (!text) {
-    throw new Error("时间不能为空");
-  }
-
-  if (/^\d+$/.test(text)) {
-    const timestamp = Number(text);
-    if (Number.isFinite(timestamp)) {
-      return timestamp;
-    }
-  }
-
-  const timestamp = dayjs(text.replace(" ", "T")).valueOf();
-  if (!Number.isFinite(timestamp)) {
-    throw new Error("时间格式无效");
-  }
-
-  return timestamp;
-}
-
-function formatActivityTime(value) {
-  if (value === undefined || value === null || value === "") {
-    return "";
-  }
-
-  const timestamp = Number(value);
-  const time = Number.isFinite(timestamp)
-    ? dayjs(timestamp)
-    : dayjs(String(value).replace(" ", "T"));
-
-  if (!time.isValid()) {
-    return String(value).trim();
-  }
-
-  return `${time.format("M.D")} ${WEEKDAY_LABELS[time.day()]} ${time.format(
-    "HH:mm",
-  )}`;
-}
-
-function buildActivityTimeFields(activity) {
-  const startTime = toTimestamp(activity.startTime);
-  const endTime = toTimestamp(activity.endTime);
-
-  return {
-    startTime,
-    endTime,
-    startTimeStr: formatActivityTime(startTime),
-    endTimeStr: formatActivityTime(endTime),
-  };
-}
-
 function normalizeActivity(activity) {
   if (!activity) {
     return activity;
@@ -76,8 +23,8 @@ function normalizeActivity(activity) {
   const endTime = Number(activity.endTime);
   const latitude = Number(activity.latitude);
   const longitude = Number(activity.longitude);
-  const startTimeStr = formatActivityTime(activity.startTimeStr || startTime);
-  const endTimeStr = formatActivityTime(activity.endTimeStr || endTime);
+  const startTimeStr = activity.startTimeStr;
+  const endTimeStr = activity.endTimeStr;
 
   return {
     ...activity,
@@ -102,17 +49,9 @@ async function insertActivityToCloud(activity) {
     data: {
       type: "insertActivity",
       data: {
-        id: activity.id,
-        title: activity.title,
-        description: activity.description,
-        ...buildActivityTimeFields(activity),
+        ...activity,
         bannerUrl: normalizeImageUrl(activity.bannerUrl),
         images: normalizeImageUrls(activity.images),
-        address: activity.address,
-        latitude: activity.latitude,
-        longitude: activity.longitude,
-        conclusion: activity.conclusion,
-        status: activity.status || (activity.isBanner ? "banner" : "normal"),
         isBanner: activity.isBanner,
       },
     },
@@ -256,7 +195,6 @@ async function createActivity(activity) {
     id: activityId,
     bannerUrl: normalizeImageUrl(source.bannerUrl),
     images: normalizeImageUrls(source.images),
-    ...buildActivityTimeFields(source),
   };
   await insertActivityToCloud(normalizedActivity);
 
@@ -297,7 +235,6 @@ async function updateActivity(activityId, updates) {
     id: activityId,
     bannerUrl: normalizeImageUrl(updates.bannerUrl),
     images: normalizeImageUrls(updates.images),
-    ...buildActivityTimeFields(updates),
     address: updates.address,
     latitude: updates.latitude,
     longitude: updates.longitude,
@@ -386,5 +323,4 @@ module.exports = {
   unlockAdmin,
   lockAdmin,
   checkPassword,
-  formatActivityTime,
 };

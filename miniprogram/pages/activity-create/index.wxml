@@ -22,10 +22,10 @@
     <t-divider content="活动内容" />
     <t-input label="标题" value="{{title}}" placeholder="活动标题" data-field="title" bind:change="onFieldInput" />
     <t-textarea label="描述" value="{{description}}" placeholder="活动描述" data-field="description" bind:change="onFieldInput" autosize="{{true}}" maxlength="-1" />
-    <t-textarea label="结论" value="{{conclusion}}" placeholder="活动结论" data-field="conclusion" bind:change="onFieldInput" autosize="{{true}}" maxlength="-1" />
+    <t-textarea label="总结" value="{{conclusion}}" placeholder="活动总结" data-field="conclusion" bind:change="onFieldInput" autosize="{{true}}" maxlength="-1" />
     <t-divider content="时间安排" />
-    <t-cell title="开始时间" note="{{startTime || '请选择开始时间'}}" arrow="{{true}}" hover="{{true}}" bind:click="onStartTimeTap" />
-    <t-cell title="结束时间" note="{{endTime || '请选择结束时间'}}" arrow="{{true}}" hover="{{true}}" bind:click="onEndTimeTap" />
+    <t-cell title="开始时间" note="{{startTimeStr || '请选择开始时间'}}" arrow="{{true}}" hover="{{true}}" bind:click="onStartTimeTap" />
+    <t-cell title="结束时间" note="{{endTimeStr || '请选择结束时间'}}" arrow="{{true}}" hover="{{true}}" bind:click="onEndTimeTap" />
     <t-divider content="图片" />
     <view class="image-picker">
       <view class="image-picker__header">

@@ -46,6 +46,8 @@ function buildEmptyState(activityId = "") {
     conclusion: "",
     startTime: "",
     endTime: "",
+    startTimeStr: "",
+    endTimeStr: "",
     timePickerTitle: "选择时间",
     timePickerValue: "",
     timePickerVisible: false,
@@ -131,6 +133,8 @@ function createActivityFormPage() {
         conclusion: activity.conclusion,
         startTime: activity.startTime,
         endTime: activity.endTime,
+        startTimeStr: activity.startTimeStr,
+        endTimeStr: activity.endTimeStr,
         images: activity.images,
         uploadFiles: buildUploadFiles(activity.images),
         isBanner: activity.isBanner,
@@ -153,23 +157,24 @@ function createActivityFormPage() {
         this.data[field] || dayjs().format("YYYY-MM-DD HH:mm"),
       ).trim();
       const titles = {
-        startTime: "选择开始时间",
-        endTime: "选择结束时间",
+        startTimeStr: "选择开始时间",
+        endTimeStr: "选择结束时间",
       };
+      console.log("field", field);
 
       this.setData({
         activeTimeField: field,
         timePickerTitle: titles[field] || "选择时间",
-        timePickerValue: value,
-        timePickerTimestamp: dayjs(value).valueOf(),
+        [field]: value,
         timePickerVisible: true,
+        timePickerValue: value,
       });
     },
     onStartTimeTap() {
-      this.showTimePicker("startTime");
+      this.showTimePicker("startTimeStr");
     },
     onEndTimeTap() {
-      this.showTimePicker("endTime");
+      this.showTimePicker("endTimeStr");
     },
     hideTimePicker() {
       this.setData({
@@ -178,19 +183,24 @@ function createActivityFormPage() {
       });
     },
     onTimePickerConfirm(event) {
-      const value = event.detail?.value || this.data.timePickerValue;
-      const { activeTimeField } = this.data;
+      console.log("event", event);
+      if (event.type === "confirm") {
+        const value = event.detail?.value;
+        const valueOfTime = dayjs(value).valueOf();
+        const { activeTimeField } = this.data;
+        console.log("activeTimeField", activeTimeField);
+        console.log("value", value);
 
-      if (!activeTimeField) {
-        return;
+        if (!activeTimeField) {
+          return;
+        }
+
+        this.setData({
+          [activeTimeField]: value,
+          timePickerVisible: false,
+          activeTimeField: "",
+        });
       }
-
-      this.setData({
-        [activeTimeField]: value,
-        timePickerValue: value,
-        timePickerVisible: false,
-        activeTimeField: "",
-      });
     },
     onTimePickerClose(event) {
       const trigger = event.detail?.trigger;
@@ -331,8 +341,9 @@ function createActivityFormPage() {
       const title = String(this.data.title || "").trim();
       const description = String(this.data.description || "").trim();
       const conclusion = String(this.data.conclusion || "").trim();
-      const startTime = String(this.data.startTime || "").trim();
-      const endTime = String(this.data.endTime || "").trim();
+      const { startTimeStr, endTimeStr } = this.data;
+      const startTime = dayjs(startTimeStr).valueOf();
+      const endTime = dayjs(endTimeStr).valueOf();
 
       if (!bannerUrl) {
         wx.showToast({
@@ -358,7 +369,7 @@ function createActivityFormPage() {
         return;
       }
 
-      if (!startTime) {
+      if (!startTimeStr) {
         wx.showToast({
           title: "请填写开始时间",
           icon: "none",
@@ -366,7 +377,7 @@ function createActivityFormPage() {
         return;
       }
 
-      if (!endTime) {
+      if (!endTimeStr) {
         wx.showToast({
           title: "请填写结束时间",
           icon: "none",
@@ -386,10 +397,13 @@ function createActivityFormPage() {
           conclusion,
           startTime,
           endTime,
+          startTimeStr,
+          endTimeStr,
           bannerUrl,
           images: this.data.images,
           isBanner: this.data.isBanner,
         };
+        console.log("payload", payload);
 
         if (this.isEditMode) {
           await updateActivity(this.activityId, payload);
