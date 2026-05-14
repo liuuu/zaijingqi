@@ -1,6 +1,0 @@
-{
-  "navigationBarTitleText": "云开发",
-  "usingComponents": {
-    "cloud-tip-modal": "/components/cloudTipModal/index"
-  }
-}

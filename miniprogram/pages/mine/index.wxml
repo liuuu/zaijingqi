@@ -2,13 +2,9 @@
   <view class="profile-card">
     <view class="avatar-wrap">
       <view class="avatar">
-        <image wx:if="{{profile.avatarUrl}}" class="avatar__image" src="{{profile.avatarUrl}}" mode="aspectFill" />
-        <view wx:else class="avatar__placeholder">🦊</view>
+        <view class="avatar__placeholder">🦊</view>
       </view>
-      <button wx:if="{{isProfileLoaded && !hasProfileRecord}}" class="avatar-button" bindtap="onTapAvatar" hover-class="none" aria-label="编辑头像和昵称"></button>
-      <view class="avatar__badge">{{!isProfileLoaded ? "加载中" : (hasProfileRecord ? "已完善" : (isProfileSaving ? "保存中" : "编辑"))}}</view>
     </view>
-    <view class="nickname">{{profile.nickName}}</view>
     <view class="motto">保持好奇，永远惊奇</view>
   </view>
   <view class="menu-card">
@@ -21,13 +17,6 @@
     </view>
   </view>
   <view class="menu-card">
-    <view class="menu-item" bind:tap="onMenuTap" data-action="navigation">
-      <view class="menu-item__icon menu-item__icon--green">📍</view>
-      <view class="menu-item__content">
-        <view class="menu-item__title">到店导航</view>
-      </view>
-      <view class="menu-item__arrow">›</view>
-    </view>
     <view class="menu-item" bind:tap="onMenuTap" data-action="settings">
       <view class="menu-item__icon menu-item__icon--gray">⚙️</view>
       <view class="menu-item__content">
@@ -52,10 +41,10 @@
       </view>
     </view>
   </view>
-  <t-dialog visible="{{showPasswordDialog}}" title="输入密码" close-btn="{{true}}" close-on-overlay-click="{{true}}" button-layout="vertical" cancel-btn="取消" confirm-btn="确认" bind:confirm="onSubmitPassword" bind:cancel="closePasswordDialog" bind:close="closePasswordDialog">
+  <t-dialog visible="{{showPasswordDialog}}" title="输入密码" close-btn="{{true}}" close-on-overlay-click="{{true}}" button-layout="horizon" cancel-btn="取消" confirm-btn="确认" bind:confirm="onSubmitPassword" bind:cancel="closePasswordDialog" bind:close="closePasswordDialog">
     <view slot="content" class="dialog-content">
       <view class="dialog-content__description">需要管理员密码才能进入内容管理。</view>
-      <t-input class="password-input" label="密码" type="password" value="{{password}}" placeholder="请输入密码" bind:change="onPasswordInput" />
+      <t-input class="password-input" label="密码" type="password" value="{{password}}" placeholder="" bind:change="onPasswordInput" />
     </view>
   </t-dialog>
 </view>

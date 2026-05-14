@@ -19,7 +19,7 @@ const getOpenId = async () => {
 const getMiniProgramCode = async () => {
   // 获取小程序二维码的buffer
   const resp = await cloud.openapi.wxacode.get({
-    path: "pages/index/index",
+    path: "pages/activities/index",
   });
   const { buffer } = resp;
   // 将图片上传云存储空间

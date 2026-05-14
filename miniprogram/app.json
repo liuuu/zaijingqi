@@ -4,7 +4,6 @@
     "pages/activity-list/index",
     "pages/activity-detail/index",
     "pages/activity-create/index",
-    "pages/index/index",
     "pages/mine/index",
     "pages/activity-admin/index",
     "pages/activity-edit/index",
@@ -23,12 +22,6 @@
         "selectedIconPath": "images/icons/examples-active.png"
       },
       {
-        "pagePath": "pages/index/index",
-        "text": "云开发",
-        "iconPath": "images/icons/business.png",
-        "selectedIconPath": "images/icons/business-active.png"
-      },
-      {
         "pagePath": "pages/mine/index",
         "text": "我的",
         "iconPath": "images/icons/usercenter.png",
@@ -40,7 +33,7 @@
     "backgroundColor": "#F6F6F6",
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#F6F6F6",
-    "navigationBarTitleText": "云开发 QuickStart",
+    "navigationBarTitleText": "QuickStart",
     "navigationBarTextStyle": "black"
   },
   "sitemapLocation": "sitemap.json",

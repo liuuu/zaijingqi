@@ -22,6 +22,7 @@ Page({
   onLoad() {
     this.loadProfileState();
   },
+
   onShow() {
     this.syncAccessState();
     if (!this.data.isProfileLoaded) {
@@ -31,15 +32,6 @@ Page({
   syncAccessState() {
     this.setData({
       isUnlocked: isAdminUnlocked(),
-    });
-  },
-  syncProfileState() {
-    const storedProfile = wx.getStorageSync("userProfile") || {};
-    this.setData({
-      profile: {
-        avatarUrl: storedProfile.avatarUrl || "",
-        nickName: storedProfile.nickName || "探索者",
-      },
     });
   },
   setProfile(profile, hasProfileRecord) {
@@ -93,7 +85,6 @@ Page({
 
     const openid = await this.syncOpenId();
     if (!openid) {
-      this.syncProfileState();
       this.setData({
         isProfileLoaded: true,
       });
@@ -101,7 +92,6 @@ Page({
     }
 
     if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {
-      this.syncProfileState();
       this.setData({
         isProfileLoaded: true,
       });
@@ -116,17 +106,16 @@ Page({
         },
       });
       const userProfile = resp && resp.result ? resp.result.data : null;
+      console.log("userProfile", userProfile);
       if (resp && resp.result && resp.result.success === true && userProfile) {
         this.setProfile(userProfile, true);
       } else {
-        this.syncProfileState();
         this.setData({
           hasProfileRecord: false,
         });
       }
     } catch (error) {
       console.error("加载用户资料失败", error);
-      this.syncProfileState();
       this.setData({
         hasProfileRecord: false,
       });
@@ -136,22 +125,16 @@ Page({
       });
     }
   },
-  async onTapAvatar() {
+  async onChooseAvatar(e, a) {
+    console.log("e", e, a);
     if (this.data.isProfileSaving) {
       return;
     }
 
-    if (this.data.hasProfileRecord) {
+    const avatarUrl = e?.detail?.avatarUrl || "";
+    if (!avatarUrl) {
       wx.showToast({
-        title: "资料已存在",
-        icon: "none",
-      });
-      return;
-    }
-
-    if (!wx.getUserProfile) {
-      wx.showToast({
-        title: "当前基础库不支持该功能",
+        title: "未获取到头像",
         icon: "none",
       });
       return;
@@ -160,23 +143,11 @@ Page({
     try {
       this.setData({
         isProfileSaving: true,
+        profile: {
+          ...this.data.profile,
+          avatarUrl,
+        },
       });
-
-      const profileResult = await wx.getUserProfile({
-        desc: "用于完善我的页面头像和昵称",
-      });
-
-      const userInfo = profileResult?.userInfo || {};
-      const nickName = (userInfo.nickName || "").trim();
-      const avatarUrl = userInfo.avatarUrl || "";
-
-      if (!nickName && !avatarUrl) {
-        wx.showToast({
-          title: "未获取到头像昵称",
-          icon: "none",
-        });
-        return;
-      }
 
       const openid = await this.syncOpenId();
       if (!openid) {
@@ -204,7 +175,7 @@ Page({
         data: {
           type: "upsertUserProfile",
           data: {
-            nickName,
+            nickName: this.data.profile.nickName || "探索者",
             avatarUrl,
           },
         },
@@ -219,7 +190,7 @@ Page({
       this.setProfile(
         {
           avatarUrl,
-          nickName: nickName || "探索者",
+          nickName: this.data.profile.nickName || "探索者",
         },
         true,
       );
