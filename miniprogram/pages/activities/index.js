@@ -1,4 +1,6 @@
-const { loadActivities } = require("../../utils/activity-store");
+const {
+  loadRecentActivities,
+} = require("../../utils/activity-store");
 
 const TAB_BAR_PAGES = [
   "/pages/activities/index",
@@ -46,7 +48,7 @@ Page({
     activeBanner: null,
   },
   async loadActivities() {
-    const data = await loadActivities();
+    const data = await loadRecentActivities();
     this.setData({
       activities: data,
       swiperList: data.map((v) => v.bannerUrl).filter(Boolean),

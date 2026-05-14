@@ -143,6 +143,30 @@ async function selectActivitiesFromCloud() {
   return cloudActivities.map((activity) => normalizeActivity(activity));
 }
 
+async function selectRecentActivitiesFromCloud() {
+  if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {
+    return [];
+  }
+
+  const result = await wx.cloud.callFunction({
+    name: "quickstartFunctions",
+    data: {
+      type: "loadRecentActivities",
+    },
+  });
+  console.log("result", result);
+
+  if (!result || !result.result || result.result.success !== true) {
+    return [];
+  }
+
+  const cloudActivities = Array.isArray(result.result.data)
+    ? result.result.data
+    : [];
+
+  return cloudActivities.map((activity) => normalizeActivity(activity));
+}
+
 async function selectActivityFromCloud(activityId) {
   const trimmedActivityId = String(activityId || "").trim();
 
@@ -188,6 +212,11 @@ async function createActivity(activity) {
 
 async function loadActivities() {
   const activities = await selectActivitiesFromCloud();
+  return activities;
+}
+
+async function loadRecentActivities() {
+  const activities = await selectRecentActivitiesFromCloud();
   return activities;
 }
 
@@ -278,6 +307,7 @@ module.exports = {
   buildActivityDetailRoute,
   createActivity,
   loadActivities,
+  loadRecentActivities,
   loadActivity,
   updateActivity,
   deleteActivity,

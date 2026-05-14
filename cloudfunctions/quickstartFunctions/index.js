@@ -223,6 +223,32 @@ const selectActivities = async () => {
   }
 };
 
+const loadRecentActivities = async () => {
+  try {
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const resp = await db
+      .collection("activities")
+      .where({
+        startTime: db.command.gte(todayStart.getTime()),
+      })
+      .orderBy("startTime", "asc")
+      .limit(10)
+      .get();
+
+    return {
+      success: true,
+      data: resp.data,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errMsg: e,
+    };
+  }
+};
+
 const selectActivity = async (event) => {
   try {
     const activityId = String(event?.id || "").trim();
@@ -335,6 +361,8 @@ exports.main = async (event, context) => {
       return await insertActivity(event);
     case "selectActivities":
       return await selectActivities(event);
+    case "loadRecentActivities":
+      return await loadRecentActivities(event);
     case "selectActivity":
       return await selectActivity(event);
     case "updateActivity":
