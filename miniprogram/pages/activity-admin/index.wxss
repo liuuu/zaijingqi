@@ -6,6 +6,12 @@ page {
   padding: 32rpx;
 }
 
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
 .hero-card,
 .activity-card {
   background: #ffffff;
@@ -72,4 +78,31 @@ page {
 
 .activity-card__actions t-button {
   flex: 1;
+}
+
+.empty-state {
+  padding: 96rpx 32rpx;
+  text-align: center;
+  color: #666666;
+}
+
+.empty-state__title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #111111;
+}
+
+.empty-state__desc {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+}
+
+.footer {
+  padding: 28rpx 0 12rpx;
+  text-align: center;
+}
+
+.footer__text {
+  font-size: 24rpx;
+  color: #999999;
 }

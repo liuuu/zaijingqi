@@ -60,7 +60,7 @@ function buildEmptyState(activityId = "") {
       height: 160,
     },
     uploadConfig: {
-      count: 9,
+      count: 19,
       sourceType: ["album", "camera"],
       sizeType: ["compressed"],
     },
@@ -109,6 +109,8 @@ function createActivityFormPage() {
       }
 
       const activity = await loadActivity(this.activityId);
+
+      console.log("activity++", activity);
 
       if (!activity) {
         wx.showToast({
@@ -159,6 +161,7 @@ function createActivityFormPage() {
         activeTimeField: field,
         timePickerTitle: titles[field] || "选择时间",
         timePickerValue: value,
+        timePickerTimestamp: dayjs(value).valueOf(),
         timePickerVisible: true,
       });
     },

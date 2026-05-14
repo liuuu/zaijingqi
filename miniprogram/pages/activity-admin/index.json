@@ -1,5 +1,7 @@
 {
   "navigationBarTitleText": "活动管理",
+  "enablePullDownRefresh": true,
+  "onReachBottomDistance": 10,
   "usingComponents": {
     "t-button": "tdesign-miniprogram/button/button",
     "t-cell": "tdesign-miniprogram/cell/cell",
