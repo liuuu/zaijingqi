@@ -223,6 +223,31 @@ const selectActivities = async () => {
   }
 };
 
+const selectActivitiesPage = async (event) => {
+  try {
+    const pageSize = Math.max(1, Number(event?.pageSize) || 10);
+    const page = Math.max(1, Number(event?.page) || 1);
+    const skip = (page - 1) * pageSize;
+
+    const resp = await db
+      .collection("activities")
+      .orderBy("startTime", "desc")
+      .skip(skip)
+      .limit(pageSize)
+      .get();
+
+    return {
+      success: true,
+      data: resp.data,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errMsg: e,
+    };
+  }
+};
+
 const loadRecentActivities = async () => {
   try {
     const todayStart = new Date();
@@ -387,6 +412,8 @@ exports.main = async (event, context) => {
       return await insertActivity(event);
     case "selectActivities":
       return await selectActivities(event);
+    case "selectActivitiesPage":
+      return await selectActivitiesPage(event);
     case "loadRecentActivities":
       return await loadRecentActivities(event);
     case "loadRecentEndActivities":

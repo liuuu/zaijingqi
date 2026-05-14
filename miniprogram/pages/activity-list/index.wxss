@@ -1,0 +1,56 @@
+.page {
+  min-height: 100vh;
+  padding: 32rpx;
+  background-color: #f6f6f6;
+  box-sizing: border-box;
+}
+
+.page-header {
+  margin-bottom: 24rpx;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #111111;
+}
+
+.description {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  line-height: 1.5;
+  color: #666666;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.empty-state {
+  padding: 96rpx 32rpx;
+  text-align: center;
+  color: #666666;
+}
+
+.empty-state__title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #111111;
+}
+
+.empty-state__desc {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+}
+
+.footer {
+  padding: 28rpx 0 12rpx;
+  text-align: center;
+}
+
+.footer__text {
+  font-size: 24rpx;
+  color: #999999;
+}

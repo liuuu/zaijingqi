@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "全部活动",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "activity-list-item": "/components/activityListItem/index"
+  }
+}

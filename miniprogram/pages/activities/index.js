@@ -63,6 +63,9 @@ Page({
       reviewActivities,
     });
   },
+  onOpenAllActivities() {
+    openRoute("/pages/activity-list/index");
+  },
   async onLoad() {
     await this.loadActivities();
   },

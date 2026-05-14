@@ -6,11 +6,11 @@
   <view class="activity-list">
     <activity-list-item wx:for="{{activities}}" wx:key="id" activity="{{item}}" bind:tap="onOpenActivity" />
   </view>
-  <view class="section-block section-block--review">
+  <view class="section-block section-block--review" wx:if="{{reviewActivities.length}}">
     <view class="section-header">
       <view class="section-title">活动回顾</view>
-      <view class="section-more">
-        更多
+      <view class="section-more" bindtap="onOpenAllActivities">
+        全部活动
         <text class="section-more-arrow">›</text>
       </view>
     </view>
