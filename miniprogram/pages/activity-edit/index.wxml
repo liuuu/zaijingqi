@@ -39,6 +39,6 @@
     <view class="action-row">
       <t-button theme="primary" bind:tap="onSave">{{submitText}}</t-button>
     </view>
-    <t-date-time-picker title="{{timePickerTitle}}" visible="{{timePickerVisible}}" value="{{timePickerValue}}" mode="minute" format="YYYY-MM-DD HH:mm" bind:confirm="onTimePickerConfirm" bind:cancel="hideTimePicker" bind:close="onTimePickerClose" />
+    <t-date-time-picker title="{{timePickerTitle}}" visible="{{timePickerVisible}}" value="{{timePckerValue}}" mode="minute" format="YYYY-MM-DD HH:mm" bind:confirm="onTimePickerConfirm" bind:cancel="hideTimePicker" bind:iclose="onTimePickerClose" />
   </view>
 </view>

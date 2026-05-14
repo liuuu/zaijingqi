@@ -1,0 +1,91 @@
+.activity-admin-card {
+  display: flex;
+  gap: 24rpx;
+  padding: 24rpx;
+  border-radius: 28rpx;
+  background: #ffffff;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.04);
+}
+
+.activity-admin-card__cover-wrap {
+  flex: 0 0 180rpx;
+  width: 180rpx;
+  height: 200rpx;
+  overflow: hidden;
+  border-radius: 20rpx;
+}
+
+.activity-admin-card__cover {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.activity-admin-card__cover--placeholder {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+}
+
+.activity-admin-card__content {
+  flex: 1;
+  min-width: 0;
+  padding: 4rpx 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.activity-admin-card__time {
+  font-size: 28rpx;
+  line-height: 1.4;
+  color: #ff7a45;
+  font-weight: 600;
+}
+
+.activity-admin-card__title {
+  margin-top: 12rpx;
+  font-size: 36rpx;
+  line-height: 1.35;
+  font-weight: 700;
+  color: #111111;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.activity-admin-card__description {
+  margin-top: 12rpx;
+  font-size: 28rpx;
+  line-height: 1.5;
+  color: #666666;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.activity-admin-card__meta {
+  padding-top: 16rpx;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.activity-admin-card__route {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  line-height: 1.5;
+  color: #999999;
+  word-break: break-all;
+}
+
+.activity-admin-card__actions {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 20rpx;
+}
+
+.activity-admin-card__actions t-button {
+  flex: 1;
+}

@@ -25,7 +25,7 @@
             <view class="review-card__badge">{{item.address || "活动"}}</view>
           </view>
           <view class="review-card__title">{{item.title}}</view>
-          <view class="review-card__subtitle">{{item.endTimeStr || item.startTimeStr}}</view>
+          <view class="review-card__subtitle">{{item.startTimeStr}}</view>
           <view class="review-card__desc">{{item.address}}</view>
         </view>
       </view>

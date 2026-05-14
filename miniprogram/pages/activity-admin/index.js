@@ -80,21 +80,21 @@ Page({
     });
   },
   onEditActivity(event) {
-    const { id } = event.currentTarget.dataset;
+    const { id } = event.detail;
 
     wx.navigateTo({
       url: `/pages/activity-create/index?id=${id}`,
     });
   },
   onPreviewActivity(event) {
-    const { id } = event.currentTarget.dataset;
+    const { id } = event.detail;
 
     wx.navigateTo({
       url: `/pages/activity-detail/index?id=${id}`,
     });
   },
   async onDeleteActivity(event) {
-    const { id } = event.currentTarget.dataset;
+    const { id } = event.detail;
     const confirm = await new Promise((resolve) => {
       wx.showModal({
         title: "删除活动",

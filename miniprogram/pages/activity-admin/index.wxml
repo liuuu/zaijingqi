@@ -10,24 +10,15 @@
     <view class="empty-state__title">加载中...</view>
   </view>
   <view wx:elif="{{activities.length}}" class="activity-list">
-    <view wx:for="{{activities}}" wx:key="id" class="activity-card">
-      <t-image class="activity-card__cover" src="{{item.bannerUrl}}" mode="aspectFill" />
-      <t-cell description="{{item.description}}" note="{{item.startTimeStr || item.startTime}}" />
-      <view class="activity-card__meta">
-        <t-tag wx:if="{{item.isBanner}}" theme="primary" variant="light">轮播</t-tag>
-        <t-tag wx:if="{{item.endTimeStr || item.endTime}}" theme="success" variant="light">{{item.endTimeStr || item.endTime}}</t-tag>
-      </view>
-      <view class="activity-card__route">{{item.routeUrl}}</view>
-      <view class="activity-card__actions">
-        <t-button variant="outline" theme="default" data-id="{{item.id}}" bind:tap="onPreviewActivity">
-          预览
-        </t-button>
-        <t-button theme="primary" data-id="{{item.id}}" bind:tap="onEditActivity">编辑</t-button>
-        <t-button theme="danger" variant="outline" data-id="{{item.id}}" loading="{{deletingActivityId === item.id}}" bind:tap="onDeleteActivity">
-          删除
-        </t-button>
-      </view>
-    </view>
+    <activity-admin-card
+      wx:for="{{activities}}"
+      wx:key="id"
+      activity="{{item}}"
+      loading="{{deletingActivityId === item.id}}"
+      bind:preview="onPreviewActivity"
+      bind:edit="onEditActivity"
+      bind:delete="onDeleteActivity"
+    />
   </view>
   <view wx:elif="{{!loading}}" class="empty-state">
     <view class="empty-state__title">暂无活动</view>
