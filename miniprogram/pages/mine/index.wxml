@@ -1,35 +1,54 @@
 <view class="page">
-  <view class="card">
-    <view class="title">{{title}}</view>
-    <view class="description">{{description}}</view>
-    <view class="password-hint">{{passwordHint}}</view>
-
-    <t-input
-      class="password-input"
-      label="密码"
-      type="password"
-      value="{{password}}"
-      placeholder="请输入密码"
-      bind:change="onPasswordInput"
-    />
-
-    <t-button class="primary-button" theme="primary" size="large" block bind:tap="onSubmitPassword">
-      进入管理
-    </t-button>
-
-    <view wx:if="{{isUnlocked}}" class="status-card">
-      <view class="status-card__title">已授权访问</view>
-      <view class="status-card__description">
-        现在可以查看活动并编辑每个活动的路由地址。
+  <view class="profile-card">
+    <view class="avatar">🦊</view>
+    <view class="nickname">探索者</view>
+    <view class="motto">保持好奇，永远惊奇</view>
+  </view>
+  <view class="menu-card">
+    <view class="menu-item" bind:tap="onMenuTap" data-action="favorites">
+      <view class="menu-item__icon menu-item__icon--blue">⭐</view>
+      <view class="menu-item__content">
+        <view class="menu-item__title">我的收藏</view>
       </view>
-      <view class="status-card__actions">
-        <t-button class="secondary-button" theme="primary" variant="outline" size="large" block bind:tap="onOpenManager">
-          打开活动管理
-        </t-button>
-        <t-button class="ghost-button" theme="default" variant="outline" size="large" block bind:tap="onLockManager">
-          锁定
-        </t-button>
+      <view class="menu-item__arrow">›</view>
+    </view>
+  </view>
+  <view class="menu-card">
+    <view class="menu-item" bind:tap="onMenuTap" data-action="navigation">
+      <view class="menu-item__icon menu-item__icon--green">📍</view>
+      <view class="menu-item__content">
+        <view class="menu-item__title">到店导航</view>
+      </view>
+      <view class="menu-item__arrow">›</view>
+    </view>
+    <view class="menu-item" bind:tap="onMenuTap" data-action="settings">
+      <view class="menu-item__icon menu-item__icon--gray">⚙️</view>
+      <view class="menu-item__content">
+        <view class="menu-item__title">设置</view>
+      </view>
+      <view class="menu-item__arrow">›</view>
+    </view>
+    <view class="menu-item menu-item--active" bind:tap="onContentManagementTap">
+      <view class="menu-item__icon menu-item__icon--orange">🛡️</view>
+      <view class="menu-item__content">
+        <view class="menu-item__title">内容管理</view>
+        <view class="menu-item__desc">需要密码才能新增或编辑活动</view>
+      </view>
+      <view class="menu-item__meta">
+        <text wx:if="{{isUnlocked}}" class="menu-item__badge">已解锁</text>
+        <view wx:if="{{isUnlocked}}" class="menu-item__lock">
+          <t-button theme="default" variant="outline" size="small" catch:tap="onLockManager">
+            锁定
+          </t-button>
+        </view>
+        <view class="menu-item__arrow">›</view>
       </view>
     </view>
   </view>
+  <t-dialog visible="{{showPasswordDialog}}" title="输入密码" close-btn="{{true}}" close-on-overlay-click="{{true}}" button-layout="vertical" cancel-btn="取消" confirm-btn="确认" bind:confirm="onSubmitPassword" bind:cancel="closePasswordDialog" bind:close="closePasswordDialog">
+    <view slot="content" class="dialog-content">
+      <view class="dialog-content__description">需要管理员密码才能进入内容管理。</view>
+      <t-input class="password-input" label="密码" type="password" value="{{password}}" placeholder="请输入密码" bind:change="onPasswordInput" />
+    </view>
+  </t-dialog>
 </view>

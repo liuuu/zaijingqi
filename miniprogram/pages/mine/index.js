@@ -1,5 +1,4 @@
 const {
-  ADMIN_PASSWORD,
   checkPassword,
   isAdminUnlocked,
   lockAdmin,
@@ -8,11 +7,9 @@ const {
 
 Page({
   data: {
-    title: "我的",
-    description: "输入密码进入活动管理。",
     password: "",
-    passwordHint: `演示密码：${ADMIN_PASSWORD}`,
     isUnlocked: false,
+    showPasswordDialog: false,
   },
   onShow() {
     this.syncAccessState();
@@ -20,6 +17,25 @@ Page({
   syncAccessState() {
     this.setData({
       isUnlocked: isAdminUnlocked(),
+    });
+  },
+  onMenuTap(event) {
+    wx.showToast({
+      title: "功能暂未开放",
+      icon: "none",
+    });
+  },
+  onContentManagementTap() {
+    if (isAdminUnlocked()) {
+      wx.navigateTo({
+        url: "/pages/activity-admin/index",
+      });
+      return;
+    }
+
+    this.setData({
+      showPasswordDialog: true,
+      password: "",
     });
   },
   onPasswordInput(event) {
@@ -40,25 +56,49 @@ Page({
     this.setData({
       password: "",
       isUnlocked: true,
+      showPasswordDialog: false,
     });
     wx.navigateTo({
       url: "/pages/activity-admin/index",
+    });
+  },
+  closePasswordDialog() {
+    this.setData({
+      showPasswordDialog: false,
+      password: "",
     });
   },
   onOpenManager() {
+    this.setData({
+      showPasswordDialog: false,
+    });
     wx.navigateTo({
       url: "/pages/activity-admin/index",
     });
   },
-  onLockManager() {
+  onLockManager(event) {
+    if (event && typeof event.stopPropagation === "function") {
+      event.stopPropagation();
+    }
+
     lockAdmin();
     this.setData({
       isUnlocked: false,
       password: "",
+      showPasswordDialog: false,
     });
+    this.syncAccessState();
     wx.showToast({
       title: "管理已锁定",
       icon: "none",
+    });
+  },
+  onOpenManager() {
+    this.setData({
+      showPasswordDialog: false,
+    });
+    wx.navigateTo({
+      url: "/pages/activity-admin/index",
     });
   },
 });
