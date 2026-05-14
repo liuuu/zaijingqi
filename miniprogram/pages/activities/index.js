@@ -68,6 +68,7 @@ Page({
   },
   async onLoad() {
     await this.loadActivities();
+    this.wxLogin();
   },
   async onPullDownRefresh() {
     await this.loadActivities();
@@ -95,5 +96,18 @@ Page({
     if (activityId) {
       openRoute(`/pages/activity-detail/index?id=${activityId}`);
     }
+  },
+  // 微信一键登录
+  async wxLogin() {
+    const res = await wx.cloud.callFunction({
+      name: "quickstartFunctions",
+      data: {
+        type: "getOpenId",
+      },
+    });
+    const openid = res.result.openid;
+    // 存到本地缓存，以后直接用
+    wx.setStorageSync("openid", openid);
+    console.log("登录成功，openid：", openid);
   },
 });
