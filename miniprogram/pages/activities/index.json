@@ -3,6 +3,8 @@
   "onReachBottomDistance": 10,
   "backgroundTextStyle": "light",
   "enablePullDownRefresh": true,
+  "enableShareAppMessage": true,
+  "enableShareTimeline": true,
   "usingComponents": {
     "t-swiper": "tdesign-miniprogram/swiper/swiper",
     "activity-list-item": "../../components/activityListItem/index"

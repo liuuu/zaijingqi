@@ -8,6 +8,10 @@ const TAB_BAR_PAGES = [
   "/pages/mine/index",
 ];
 
+function buildSharePath(routePath, query = "") {
+  return query ? `${routePath}?${query}` : routePath;
+}
+
 function openRoute(routeUrl) {
   const nextRoute = String(routeUrl || "").trim();
   const routePath = nextRoute.split("?")[0];
@@ -48,6 +52,19 @@ Page({
     activeBanner: null,
     reviewActivities: [],
   },
+  buildShareInfo() {
+    const shareActivity = this.data.activeBanner || this.data.activities[0] || null;
+    const title = shareActivity && shareActivity.title
+      ? `${shareActivity.title}｜活动`
+      : "活动";
+    const path = buildSharePath("/pages/activities/index");
+
+    return {
+      title,
+      path,
+      imageUrl: shareActivity && shareActivity.bannerUrl ? shareActivity.bannerUrl : undefined,
+    };
+  },
   async loadActivities() {
     const [activities, reviewActivities] = await Promise.all([
       loadRecentActivities(),
@@ -86,15 +103,28 @@ Page({
     if (!activeBanner || !activeBanner.id) {
       return;
     }
-    openRoute(`/pages/activity-detail/index?id=${activeBanner.id}`);
+    openRoute(
+      `/pages/activity-detail/index?id=${encodeURIComponent(activeBanner.id)}`,
+    );
   },
   onOpenActivity(event) {
     const activityId =
       event?.detail?.activity?.id || event?.currentTarget?.dataset?.id || "";
 
     if (activityId) {
-      openRoute(`/pages/activity-detail/index?id=${activityId}`);
+      openRoute(buildSharePath("/pages/activity-detail/index", `id=${encodeURIComponent(activityId)}`));
     }
+  },
+  onShareAppMessage() {
+    return this.buildShareInfo();
+  },
+  onShareTimeline() {
+    const shareInfo = this.buildShareInfo();
+    return {
+      title: shareInfo.title,
+      query: "",
+      imageUrl: shareInfo.imageUrl,
+    };
   },
   // 微信一键登录
   async wxLogin() {
