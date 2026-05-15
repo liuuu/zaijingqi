@@ -29,8 +29,6 @@ Page({
       value: image,
     }));
 
-    console.log("galleryImages", galleryImages);
-
     this.setData({
       activity: data,
       galleryImages,
@@ -44,6 +42,13 @@ Page({
     wx.previewImage({
       urls: [activity.bannerUrl],
       current: activity.bannerUrl,
+    });
+  },
+  onActivityImageTap(e) {
+    const index = e.currentTarget.dataset.index;
+    wx.previewImage({
+      urls: this.data.galleryImages.map((v) => v.url),
+      current: this.data.galleryImages[index].url,
     });
   },
 });

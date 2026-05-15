@@ -27,7 +27,7 @@
   <view class="card" wx:if="{{galleryImages.length}}">
     <view class="section-title">活动图片</view>
     <view wx:if="{{galleryImages.length}}" class="image-grid">
-      <t-image wx:for="{{galleryImages}}" wx:key="url" class="detail-image" src="{{item.url}}" mode="aspectFill" />
+      <t-image wx:for="{{galleryImages}}" wx:key="url" class="detail-image" src="{{item.url}}" mode="aspectFill" bindtap="onActivityImageTap" data-index="{{index}}" />
     </view>
   </view>
 </view>
