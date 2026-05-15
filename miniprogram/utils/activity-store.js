@@ -161,6 +161,54 @@ async function selectRecentEndActivitiesFromCloud() {
   return cloudActivities.map((activity) => normalizeActivity(activity));
 }
 
+async function selectUpcomingActivitiesFromCloud() {
+  if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {
+    return [];
+  }
+
+  const result = await wx.cloud.callFunction({
+    name: "quickstartFunctions",
+    data: {
+      type: "selectUpcomingActivities",
+    },
+  });
+
+  if (!result || !result.result || result.result.success !== true) {
+    return [];
+  }
+
+  const cloudActivities = Array.isArray(result.result.data)
+    ? result.result.data
+    : [];
+
+  return cloudActivities.map((activity) => normalizeActivity(activity));
+}
+
+async function selectPastActivitiesPageFromCloud(page, pageSize) {
+  if (!wx.cloud || typeof wx.cloud.callFunction !== "function") {
+    return [];
+  }
+
+  const result = await wx.cloud.callFunction({
+    name: "quickstartFunctions",
+    data: {
+      type: "selectPastActivitiesPage",
+      page,
+      pageSize,
+    },
+  });
+
+  if (!result || !result.result || result.result.success !== true) {
+    return [];
+  }
+
+  const cloudActivities = Array.isArray(result.result.data)
+    ? result.result.data
+    : [];
+
+  return cloudActivities.map((activity) => normalizeActivity(activity));
+}
+
 async function selectActivityFromCloud(activityId) {
   const trimmedActivityId = String(activityId || "").trim();
 
@@ -220,6 +268,16 @@ async function loadRecentActivities() {
 
 async function loadRecentEndActivities() {
   const activities = await selectRecentEndActivitiesFromCloud();
+  return activities;
+}
+
+async function loadUpcomingActivities() {
+  const activities = await selectUpcomingActivitiesFromCloud();
+  return activities;
+}
+
+async function loadPastActivitiesPage(page, pageSize) {
+  const activities = await selectPastActivitiesPageFromCloud(page, pageSize);
   return activities;
 }
 
@@ -315,6 +373,8 @@ module.exports = {
   loadActivitiesPage,
   loadRecentActivities,
   loadRecentEndActivities,
+  loadUpcomingActivities,
+  loadPastActivitiesPage,
 
   loadActivity,
   updateActivity,

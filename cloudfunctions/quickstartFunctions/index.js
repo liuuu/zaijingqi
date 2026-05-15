@@ -392,6 +392,62 @@ const loadRecentEndActivities = async () => {
   }
 };
 
+const selectUpcomingActivities = async () => {
+  try {
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const resp = await db
+      .collection("activities")
+      .where({
+        startTime: db.command.gte(todayStart.getTime()),
+      })
+      .orderBy("startTime", "asc")
+      .limit(1000)
+      .get();
+
+    return {
+      success: true,
+      data: resp.data,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errMsg: e,
+    };
+  }
+};
+
+const selectPastActivitiesPage = async (event) => {
+  try {
+    const pageSize = Math.max(1, Number(event?.pageSize) || 10);
+    const page = Math.max(1, Number(event?.page) || 1);
+    const skip = (page - 1) * pageSize;
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    const resp = await db
+      .collection("activities")
+      .where({
+        startTime: db.command.lt(todayStart.getTime()),
+      })
+      .orderBy("startTime", "desc")
+      .skip(skip)
+      .limit(pageSize)
+      .get();
+
+    return {
+      success: true,
+      data: resp.data,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      errMsg: e,
+    };
+  }
+};
+
 const selectActivity = async (event) => {
   try {
     const activityId = String(event?.id || "").trim();
@@ -518,6 +574,10 @@ exports.main = async (event, context) => {
       return await loadRecentActivities(event);
     case "loadRecentEndActivities":
       return await loadRecentEndActivities(event);
+    case "selectUpcomingActivities":
+      return await selectUpcomingActivities(event);
+    case "selectPastActivitiesPage":
+      return await selectPastActivitiesPage(event);
     case "selectActivity":
       return await selectActivity(event);
     case "updateActivity":

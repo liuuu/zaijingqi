@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "活动日历",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "activity-calendar-card": "../../components/activityCalendarCard/index"
+  }
+}

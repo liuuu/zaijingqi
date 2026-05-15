@@ -1,0 +1,18 @@
+<view class="calendar-card" hover-class="calendar-card--hover" hover-stay-time="80" bindtap="onTap">
+  <view class="calendar-card__cover-wrap">
+    <image wx:if="{{activity.bannerUrl}}" class="calendar-card__cover" mode="aspectFill" src="{{activity.bannerUrl}}" />
+    <view wx:else class="calendar-card__cover calendar-card__cover--placeholder"></view>
+  </view>
+  <view class="calendar-card__content">
+    <view class="calendar-card__meta-row">
+      <text class="calendar-card__time">{{timeText}}</text>
+      <text wx:if="{{statusText}}" class="calendar-card__status">{{statusText}}</text>
+    </view>
+    <view class="calendar-card__title">{{activity.title}}</view>
+    <view class="calendar-card__desc">{{activity.description}}</view>
+    <view class="calendar-card__footer">
+      <text class="calendar-card__footer-text">{{footerText}}</text>
+      <text class="calendar-card__detail">查看详情</text>
+    </view>
+  </view>
+</view>

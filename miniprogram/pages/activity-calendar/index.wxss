@@ -1,0 +1,110 @@
+.page {
+  min-height: 100vh;
+  padding: 32rpx;
+  background-color: #f6f6f6;
+  box-sizing: border-box;
+}
+
+.page-header {
+  margin-bottom: 28rpx;
+}
+
+.page-title {
+  font-size: 42rpx;
+  font-weight: 700;
+  color: #111111;
+}
+
+.page-desc {
+  margin-top: 14rpx;
+  font-size: 28rpx;
+  line-height: 1.5;
+  color: #666666;
+}
+
+.tab-switcher {
+  display: flex;
+  gap: 24rpx;
+  margin-bottom: 28rpx;
+}
+
+.tab-item {
+  flex: 1;
+  height: 88rpx;
+  border-radius: 20rpx;
+  background: #ffffff;
+  color: #666666;
+  font-size: 30rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-item--active {
+  background: #ff7a45;
+  color: #ffffff;
+}
+
+.tab-panel {
+  padding-bottom: 32rpx;
+}
+
+.group-list {
+  display: flex;
+  flex-direction: column;
+  gap: 28rpx;
+}
+
+.day-group__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.day-group__date {
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #111111;
+}
+
+.day-group__count {
+  font-size: 26rpx;
+  color: #999999;
+}
+
+.day-group__cards,
+.flat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.empty-state {
+  padding: 100rpx 32rpx;
+  text-align: center;
+  color: #666666;
+}
+
+.empty-state__title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #111111;
+}
+
+.empty-state__desc {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  line-height: 1.5;
+}
+
+.footer {
+  padding: 28rpx 0 12rpx;
+  text-align: center;
+}
+
+.footer__text {
+  font-size: 24rpx;
+  color: #999999;
+}

@@ -1,0 +1,54 @@
+<view class="page">
+  <view class="page-header">
+    <view class="page-title">活动日历</view>
+    <view class="page-desc">按日期查看未来安排，也可以回看已经结束的活动内容。</view>
+  </view>
+
+  <view class="tab-switcher">
+    <view class="tab-item {{activeTab === 'upcoming' ? 'tab-item--active' : ''}}" bindtap="onSwitchTab" data-tab="upcoming">
+      即将开始
+    </view>
+    <view class="tab-item {{activeTab === 'past' ? 'tab-item--active' : ''}}" bindtap="onSwitchTab" data-tab="past">
+      往期回顾
+    </view>
+  </view>
+
+  <view wx:if="{{activeTab === 'upcoming'}}" class="tab-panel">
+    <view wx:if="{{upcomingLoading && !upcomingGroups.length}}" class="empty-state">
+      <view class="empty-state__title">加载中...</view>
+    </view>
+    <view wx:elif="{{upcomingGroups.length}}" class="group-list">
+      <view wx:for="{{upcomingGroups}}" wx:key="dateKey" class="day-group">
+        <view class="day-group__header">
+          <view class="day-group__date">{{item.label}}</view>
+          <view class="day-group__count">{{item.count}}场</view>
+        </view>
+        <view class="day-group__cards">
+          <activity-calendar-card wx:for="{{item.items}}" wx:key="id" activity="{{item}}" bind:tap="onOpenActivity" />
+        </view>
+      </view>
+    </view>
+    <view wx:elif="{{!upcomingLoading}}" class="empty-state">
+      <view class="empty-state__title">暂无即将开始的活动</view>
+      <view class="empty-state__desc">有新活动时会按日期分组展示在这里。</view>
+    </view>
+  </view>
+
+  <view wx:else class="tab-panel">
+    <view wx:if="{{pastLoading && !pastActivities.length}}" class="empty-state">
+      <view class="empty-state__title">加载中...</view>
+    </view>
+    <view wx:elif="{{pastActivities.length}}" class="flat-list">
+      <activity-calendar-card wx:for="{{pastActivities}}" wx:key="id" activity="{{item}}" bind:tap="onOpenActivity" />
+    </view>
+    <view wx:elif="{{!pastLoading}}" class="empty-state">
+      <view class="empty-state__title">暂无往期活动</view>
+      <view class="empty-state__desc">已经结束的活动会出现在这里。</view>
+    </view>
+    <view class="footer">
+      <view wx:if="{{pastLoadingMore}}" class="footer__text">加载中...</view>
+      <view wx:elif="{{pastHasMore}}" class="footer__text">继续上拉加载更多</view>
+      <view wx:else class="footer__text">没有更多活动了</view>
+    </view>
+  </view>
+</view>

@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/activities/index",
+    "pages/activity-calendar/index",
     "pages/activity-list/index",
     "pages/activity-detail/index",
     "pages/activity-create/index",
@@ -20,6 +21,12 @@
         "text": "活动",
         "iconPath": "images/icons/examples.png",
         "selectedIconPath": "images/icons/examples-active.png"
+      },
+      {
+        "pagePath": "pages/activity-calendar/index",
+        "text": "活动日历",
+        "iconPath": "images/icons/home.png",
+        "selectedIconPath": "images/icons/home-active.png"
       },
       {
         "pagePath": "pages/mine/index",
