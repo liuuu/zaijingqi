@@ -11,7 +11,7 @@
     <view class="calendar-card__title">{{activity.title}}</view>
     <view class="calendar-card__desc">{{activity.description}}</view>
     <view class="calendar-card__footer">
-      <text class="calendar-card__footer-text">{{footerText}}</text>
+      <text class="calendar-card__footer-text">{{activity.startTimeStr}}</text>
       <text class="calendar-card__detail">查看详情</text>
     </view>
   </view>
