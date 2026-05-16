@@ -1,5 +1,10 @@
 const dayjs = require("dayjs");
-const { normalizeImageUrl, normalizeImageUrls } = require("./activity-image");
+const {
+  normalizeImageUrl,
+  normalizeImageUrls,
+  resolveCloudImageUrl,
+  resolveCloudImageUrls,
+} = require("./activity-image");
 
 const ADMIN_AUTH_STORAGE_KEY = "activity-admin-unlocked";
 const ADMIN_PASSWORD = "admin";
@@ -14,22 +19,30 @@ function generateActivityId() {
   return `activity-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-function normalizeActivity(activity) {
+async function normalizeActivity(activity) {
   if (!activity) {
     return activity;
   }
 
+  const bannerFileID = normalizeImageUrl(activity.bannerUrl);
+  const imageFileIDs = normalizeImageUrls(activity.images);
   const startTime = Number(activity.startTime);
   const endTime = Number(activity.endTime);
   const latitude = Number(activity.latitude);
   const longitude = Number(activity.longitude);
   const startTimeStr = activity.startTimeStr;
   const endTimeStr = activity.endTimeStr;
+  const [bannerUrl, images] = await Promise.all([
+    resolveCloudImageUrl(bannerFileID),
+    resolveCloudImageUrls(imageFileIDs),
+  ]);
 
   return {
     ...activity,
-    bannerUrl: normalizeImageUrl(activity.bannerUrl),
-    images: normalizeImageUrls(activity.images),
+    bannerUrl,
+    bannerFileID,
+    images,
+    imageFileIDs,
     startTime: Number.isFinite(startTime) ? startTime : activity.startTime,
     endTime: Number.isFinite(endTime) ? endTime : activity.endTime,
     latitude: Number.isFinite(latitude) ? latitude : activity.latitude,
@@ -86,7 +99,9 @@ async function selectActivitiesFromCloud() {
     ? result.result.data
     : [];
 
-  return cloudActivities.map((activity) => normalizeActivity(activity));
+  return Promise.all(
+    cloudActivities.map((activity) => normalizeActivity(activity)),
+  );
 }
 
 async function selectActivitiesPageFromCloud(page, pageSize) {
@@ -111,7 +126,9 @@ async function selectActivitiesPageFromCloud(page, pageSize) {
     ? result.result.data
     : [];
 
-  return cloudActivities.map((activity) => normalizeActivity(activity));
+  return Promise.all(
+    cloudActivities.map((activity) => normalizeActivity(activity)),
+  );
 }
 
 async function selectRecentActivitiesFromCloud() {
@@ -134,7 +151,9 @@ async function selectRecentActivitiesFromCloud() {
     ? result.result.data
     : [];
 
-  return cloudActivities.map((activity) => normalizeActivity(activity));
+  return Promise.all(
+    cloudActivities.map((activity) => normalizeActivity(activity)),
+  );
 }
 
 async function selectRecentEndActivitiesFromCloud() {
@@ -158,7 +177,9 @@ async function selectRecentEndActivitiesFromCloud() {
     ? result.result.data
     : [];
 
-  return cloudActivities.map((activity) => normalizeActivity(activity));
+  return Promise.all(
+    cloudActivities.map((activity) => normalizeActivity(activity)),
+  );
 }
 
 async function selectUpcomingActivitiesFromCloud() {
@@ -181,7 +202,9 @@ async function selectUpcomingActivitiesFromCloud() {
     ? result.result.data
     : [];
 
-  return cloudActivities.map((activity) => normalizeActivity(activity));
+  return Promise.all(
+    cloudActivities.map((activity) => normalizeActivity(activity)),
+  );
 }
 
 async function selectPastActivitiesPageFromCloud(page, pageSize) {
@@ -206,7 +229,9 @@ async function selectPastActivitiesPageFromCloud(page, pageSize) {
     ? result.result.data
     : [];
 
-  return cloudActivities.map((activity) => normalizeActivity(activity));
+  return Promise.all(
+    cloudActivities.map((activity) => normalizeActivity(activity)),
+  );
 }
 
 async function selectActivityFromCloud(activityId) {
@@ -232,7 +257,7 @@ async function selectActivityFromCloud(activityId) {
     return null;
   }
 
-  return result.result.data ? normalizeActivity(result.result.data) : null;
+  return result.result.data ? await normalizeActivity(result.result.data) : null;
 }
 
 async function createActivity(activity) {
@@ -247,7 +272,7 @@ async function createActivity(activity) {
   await insertActivityToCloud(normalizedActivity);
 
   return {
-    activity: normalizeActivity(normalizedActivity),
+    activity: await normalizeActivity(normalizedActivity),
   };
 }
 

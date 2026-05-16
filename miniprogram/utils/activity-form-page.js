@@ -123,11 +123,19 @@ function createActivityFormPage() {
         return;
       }
 
+      const bannerFileID = activity.bannerFileID || activity.bannerUrl;
+      const imageFileIDs =
+        activity.imageFileIDs && activity.imageFileIDs.length
+          ? activity.imageFileIDs
+          : activity.images;
       this.hasLoadedActivity = true;
       this.setData({
         activityId: activity.id,
-        bannerUrl: activity.bannerUrl,
-        bannerUploadFiles: buildUploadFiles([activity.bannerUrl]),
+        bannerUrl: bannerFileID,
+        bannerUploadFiles: buildUploadFiles(
+          [bannerFileID],
+          [activity.bannerUrl],
+        ),
         title: activity.title,
         description: activity.description,
         conclusion: activity.conclusion,
@@ -135,8 +143,8 @@ function createActivityFormPage() {
         endTime: activity.endTime,
         startTimeStr: activity.startTimeStr,
         endTimeStr: activity.endTimeStr,
-        images: activity.images,
-        uploadFiles: buildUploadFiles(activity.images),
+        images: imageFileIDs,
+        uploadFiles: buildUploadFiles(imageFileIDs, activity.images),
         isBanner: activity.isBanner,
       });
     },
@@ -236,7 +244,8 @@ function createActivityFormPage() {
         const nextFiles = [
           {
             ...file,
-            url: result.fileID,
+            url: result.tempFileURL || result.fileID,
+            fileID: result.fileID,
             status: "done",
             percent: 100,
           },
@@ -292,7 +301,8 @@ function createActivityFormPage() {
           const result = await uploadImageFile(file.url);
           const uploadedFile = {
             ...file,
-            url: result.fileID,
+            url: result.tempFileURL || result.fileID,
+            fileID: result.fileID,
             status: "done",
             percent: 100,
           };
