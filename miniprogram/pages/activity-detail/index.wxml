@@ -15,6 +15,10 @@
         结束 {{activity.endTimeStr || activity.endTime}}
       </t-tag>
     </view>
+    <view wx:if="{{activity.address}}" class="activity-meta" ontap="onIconTap">
+      <t-icon name="location-filled" size="30rpx" />
+      <view class="activity-meta__text">{{activity.address}}</view>
+    </view>
   </view>
   <view class="card">
     <view class="section-title">活动介绍</view>

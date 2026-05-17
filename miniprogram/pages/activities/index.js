@@ -46,6 +46,7 @@ Page({
     imageProps: {
       mode: "aspectFit",
     },
+    loading: false,
     activities: [],
     swiperList: [],
     currentBannerIndex: 0,
@@ -66,18 +67,24 @@ Page({
     };
   },
   async loadActivities() {
-    const [activities, reviewActivities] = await Promise.all([
-      loadRecentActivities(),
-      loadRecentEndActivities(),
-    ]);
+    this.setData({ loading: true });
 
-    console.log("reviewActivities", reviewActivities);
-    this.setData({
-      activities,
-      swiperList: activities.map((v) => v.bannerUrl).filter(Boolean),
-      activeBanner: activities[0] || null,
-      reviewActivities,
-    });
+    try {
+      const [activities, reviewActivities] = await Promise.all([
+        loadRecentActivities(),
+        loadRecentEndActivities(),
+      ]);
+
+      console.log("reviewActivities", reviewActivities);
+      this.setData({
+        activities,
+        swiperList: activities.map((v) => v.bannerUrl).filter(Boolean),
+        activeBanner: activities[0] || null,
+        reviewActivities,
+      });
+    } finally {
+      this.setData({ loading: false });
+    }
   },
   onOpenAllActivities() {
     openRoute("/pages/activity-list/index");

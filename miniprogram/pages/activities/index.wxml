@@ -5,8 +5,15 @@
   <view class="section-header">
     <view class="section-title">近期活动</view>
   </view>
-  <view class="activity-list">
+  <view wx:if="{{loading && !activities.length}}" class="empty-state">
+    <view class="empty-state__title">加载中...</view>
+  </view>
+  <view wx:elif="{{activities.length}}" class="activity-list">
     <activity-list-item wx:for="{{activities}}" wx:key="id" activity="{{item}}" bind:tap="onOpenActivity" />
+  </view>
+  <view wx:else class="empty-state">
+    <view class="empty-state__title">暂无近期活动</view>
+    <view class="empty-state__action" bindtap="onOpenAllActivities">查看全部活动</view>
   </view>
   <view class="section-block section-block--review" wx:if="{{reviewActivities.length}}">
     <view class="section-header">
