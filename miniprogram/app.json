@@ -6,6 +6,7 @@
     "pages/activity-detail/index",
     "pages/activity-create/index",
     "pages/mine/index",
+    "pages/navigation/index",
     "pages/activity-admin/index",
     "pages/activity-edit/index",
     "pages/example/index"
@@ -27,6 +28,12 @@
         "text": "活动日历",
         "iconPath": "images/icons/home.png",
         "selectedIconPath": "images/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/navigation/index",
+        "text": "导航",
+        "iconPath": "images/icons/location.png",
+        "selectedIconPath": "images/icons/location-active.png"
       },
       {
         "pagePath": "pages/mine/index",

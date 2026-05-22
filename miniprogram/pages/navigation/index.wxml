@@ -1,0 +1,35 @@
+<view class="navigation-page">
+  <view class="hero">
+    <view class="hero-icon">
+      <t-icon name="location-filled" size="58rpx" color="#18A058" />
+    </view>
+    <view class="hero-title">导航至{{venue.shortName}}</view>
+    <view class="hero-subtitle">一键打开微信地图，直接到达活动现场</view>
+  </view>
+
+  <view class="venue-card">
+    <view class="venue-head">
+      <view class="venue-head__content">
+        <view class="venue-name">{{venue.name}}</view>
+        <view class="venue-label">导航目的地</view>
+      </view>
+      <button class="share-pill" open-type="share">分享</button>
+    </view>
+
+    <view class="address-block">
+      <view class="label">导航地址</view>
+      <view class="address">{{venue.address}}</view>
+      <view class="guide">{{venue.guide}}</view>
+    </view>
+
+    <view class="action-row">
+      <view class="secondary-btn tap-btn" bindtap="copyAddress">复制地址</view>
+      <view class="primary-btn tap-btn" bindtap="openMap">导航至在惊奇</view>
+    </view>
+  </view>
+
+  <view class="tip-card">
+    <view class="tip-title">到店提示</view>
+    <view class="tip-text">到达万年场站B口后，按现场指引或活动通知前往；若同行朋友找不到位置，可以直接点右上方分享按钮把导航页转发给朋友。</view>
+  </view>
+</view>

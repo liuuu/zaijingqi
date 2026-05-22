@@ -5,6 +5,7 @@ const {
 
 const TAB_BAR_PAGES = [
   "/pages/activities/index",
+  "/pages/navigation/index",
   "/pages/mine/index",
 ];
 
